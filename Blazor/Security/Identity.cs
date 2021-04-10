@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using Microsoft.JSInterop;
 using System.Text.Json;
 using ClassLibrary.Javascript;
-using drualcman;
 using ClassLibrary.Attributes;
 
 namespace ClassLibrary.Security
@@ -31,7 +30,7 @@ namespace ClassLibrary.Security
         /// <returns></returns>
         public static async Task<bool> SignInAsync<T>(IJSRuntime jsRuntime, T user)
         {
-            string token = Hash.Token();
+            string token = Token();
             return await SignInAsync(jsRuntime, user, token);
         }
 
@@ -367,6 +366,16 @@ namespace ClassLibrary.Security
             List<Claim> claims = SetClaims(user, authenticationType, displayName);           
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, authenticationType);
             return claimsIdentity;
+        }
+        #endregion
+
+        #region helpers
+        private static string Token()
+        {
+            long i = 1;
+            foreach (byte b in Guid.NewGuid().ToByteArray()) i *= ((int)b + 1);
+            Cryptography.MD5 md5 = new Cryptography.MD5();
+            return md5.Create(string.Format("{0:x}", i - DateTime.Now.Ticks));
         }
         #endregion
     }
