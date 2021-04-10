@@ -1,0 +1,41 @@
+﻿@typeparam T
+@if (Items != null)
+{
+    <div class="table-container">
+        <table @attributes="AdditionalAttributes">
+            <thead>
+                <tr>
+                    @if (Head != null)
+                    {
+                        @Head
+                    }
+                    else
+                    {
+                        @DefaultHead
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Items.Count() == 0)
+                {
+                    @Empty
+                }
+                else @if (Body != null)
+                {
+                    foreach (T item in Items)
+                    {
+                        <tr>
+                            @this.Body(item)
+                        </tr>
+                    }
+                }
+                else
+                {
+                    @DefaultBody
+                }
+            </tbody>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+}
