@@ -374,8 +374,8 @@ namespace ClassLibrary.Security
         {
             long i = 1;
             foreach (byte b in Guid.NewGuid().ToByteArray()) i *= ((int)b + 1);
-            Cryptography.MD5 md5 = new Cryptography.MD5();
-            return md5.Create(string.Format("{0:x}", i - DateTime.Now.Ticks));
+             Cipher.Hash.MD5 md5 = new Cipher.Hash.MD5();
+            return md5.ComputeHash(string.Format("{0:x}", i - DateTime.Now.Ticks));
         }
         #endregion
     }
