@@ -12,8 +12,8 @@ namespace ClassLibrary.Security.Cryptography
         private const long BYTES_TO_A_WORD = 4;
         private const long BITS_TO_A_WORD = BYTES_TO_A_WORD * BITS_TO_A_BYTE;
 
-        private long[] m_lOnBits = new long[30];
-        private long[] m_l2Power = new long[30];
+        private long[] m_lOnBits = new long[31];
+        private long[] m_l2Power = new long[31];
 
         /// <summary>
         /// DESCRIPTION:
@@ -548,9 +548,9 @@ namespace ClassLibrary.Security.Cryptography
             b = 0xEFCDAB89;
             c = 0x98BADCFE;
             d = 0x10325476;
-
+            int count = x.Length;
             // Step 4.  Process the message in 16-word blocks
-            for (k = 0; k <= x.GetUpperBound(1); k += 16)
+            for (k = 0; k < count; k += 16)
             {
                 AA = a;
                 BB = b;

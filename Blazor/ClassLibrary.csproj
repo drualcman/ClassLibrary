@@ -11,11 +11,10 @@
     <PackageReference Include="DrUalcman-Cipher" Version="1.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.5" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
-    <PackageReference Include="Microsoft.JSInterop" Version="5.0.4" />
+    <PackageReference Include="Microsoft.JSInterop" Version="5.0.5" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
   </ItemGroup>
 
