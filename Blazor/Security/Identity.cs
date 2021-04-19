@@ -17,7 +17,6 @@ namespace ClassLibrary.Security
     /// Manage the actions to Sign In and Sign Out users using Personalized Model Claims
     /// Default authentication type is CookieAuthenticationDefaults.AuthenticationScheme
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public static class Identity
     {
         #region login actions
@@ -25,10 +24,11 @@ namespace ClassLibrary.Security
         /// Login request from a model user send
         /// Authentication only local storage without token
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="jsRuntime"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static async Task<bool> SignInAsync<T>(IJSRuntime jsRuntime, T user)
+        public static async Task<bool> SignInAsync<TUser>(IJSRuntime jsRuntime, TUser user)
         {
             string token = Token();
             return await SignInAsync(jsRuntime, user, token);
@@ -38,17 +38,18 @@ namespace ClassLibrary.Security
         /// Login request from a model user send
         /// Authentication used jwt authentication with token
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="jsRuntime"></param>
         /// <param name="user"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task<bool> SignInAsync<T>(IJSRuntime jsRuntime, T user, string token)
+        public static async Task<bool> SignInAsync<TUser>(IJSRuntime jsRuntime, TUser user, string token)
         {
             bool result;
             try
             {
 
-                string jsonString = JsonSerializer.Serialize<T>(user);
+                string jsonString = JsonSerializer.Serialize<TUser>(user);
                 string key = token.Split('.')[2];
                 Cipher.Secret e = new Cipher.Secret(key);
                 string jsonData = await e.EncriptAsync(jsonString);
@@ -69,10 +70,11 @@ namespace ClassLibrary.Security
         /// Login request from a model user send
         /// Authentication used CookieAuthenticationDefaults.AuthenticationScheme
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="context"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static async Task<bool> SignInAsync<T>(HttpContext context, T user)
+        public static async Task<bool> SignInAsync<TUser>(HttpContext context, TUser user)
         {
             return await SignInAsync(context, user, CookieAuthenticationDefaults.AuthenticationScheme);
         }
@@ -81,11 +83,12 @@ namespace ClassLibrary.Security
         /// Login request from a model user send
         /// Authentication used CookieAuthenticationDefaults.AuthenticationScheme
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="displayName">Who is the property to show default like user name in the Identity</param>
         /// <param name="context"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static async Task<bool> SignInAsync<T>(string displayName, HttpContext context, T user)
+        public static async Task<bool> SignInAsync<TUser>(string displayName, HttpContext context, TUser user)
         {
             return await SignInAsync(context, user, CookieAuthenticationDefaults.AuthenticationScheme, displayName);
         }
@@ -93,11 +96,12 @@ namespace ClassLibrary.Security
         /// <summary>
         /// Login request from a model user send
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="context"></param>
         /// <param name="user"></param>
         /// <param name="authenticationType">Set what authentication will used</param>
         /// <returns></returns>
-        public static async Task<bool> SignInAsync<T>(HttpContext context, T user, string authenticationType)
+        public static async Task<bool> SignInAsync<TUser>(HttpContext context, TUser user, string authenticationType)
         {
             return await SignInAsync(context, user, CookieAuthenticationDefaults.AuthenticationScheme, "name");
         }
@@ -105,12 +109,13 @@ namespace ClassLibrary.Security
         /// <summary>
         /// Login request from a model user send
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="context"></param>
         /// <param name="user"></param>
         /// <param name="authenticationType">Set what authentication will used</param>
         /// <param name="displayName">Who is the property to show default like user name in the Identity</param>
         /// <returns></returns>
-        public static async Task<bool> SignInAsync<T>(HttpContext context, T user, string authenticationType, string displayName)
+        public static async Task<bool> SignInAsync<TUser>(HttpContext context, TUser user, string authenticationType, string displayName)
         {
             bool result;
             try
@@ -171,20 +176,21 @@ namespace ClassLibrary.Security
         /// Get the claims about the active user and return the user model
         /// Authentication used jwt authentication
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static async Task<T> GetUserAsync<T>(IJSRuntime jsRuntime) where T: new ()
+        public static async Task<TUser> GetUserAsync<TUser>(IJSRuntime jsRuntime) where TUser: new ()
         {
             string data = await jsRuntime.LocalStorageGetAsync("blazor");
 
-            if (string.IsNullOrEmpty(data)) return new T();
+            if (string.IsNullOrEmpty(data)) return new TUser();
             else
             {
                 string token = await jsRuntime.LocalStorageGetAsync("token");
                 string key = token.Split('.')[2];
                 Cipher.Secret e = new Cipher.Secret(key);
                 string jsonString = await e.DecriptAsync(data);
-                return JsonSerializer.Deserialize<T>(jsonString);
+                return JsonSerializer.Deserialize<TUser>(jsonString);
             }
         }
 
@@ -192,29 +198,31 @@ namespace ClassLibrary.Security
         /// Get the claims about the active user and return the user model
         /// Authentication used CookieAuthenticationDefaults.AuthenticationScheme
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static async Task<T> GetUserAsync<T>(HttpContext context) where T : new()
+        public static async Task<TUser> GetUserAsync<TUser>(HttpContext context) where TUser : new()
         {
-            return await GetUserAsync<T>(context, CookieAuthenticationDefaults.AuthenticationScheme);
+            return await GetUserAsync<TUser>(context, CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         /// <summary>
         /// Get the claims about the active user and return the user model
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="context"></param>
         /// <param name="authenticationType">Set what authentication will used</param>
         /// <returns></returns>
-        public static async Task<T> GetUserAsync<T>(HttpContext context, string authenticationType) where T: new()
+        public static async Task<TUser> GetUserAsync<TUser>(HttpContext context, string authenticationType) where TUser: new()
         {
             try
             {
-                T User = new T();
+                TUser User = new TUser();
                 AuthenticateResult x = await context.AuthenticateAsync(authenticationType);
                 if (x.Succeeded)
                 {
                     //use reflexion to fill the object
-                    Type myType = typeof(T);
+                    Type myType = typeof(TUser);
                     string model = $"{myType.Namespace}.{myType.Name}";
                     //Type t = Assembly.GetExecutingAssembly().GetType(model, true, true);
                     
@@ -257,9 +265,10 @@ namespace ClassLibrary.Security
         /// Set the claims for the user
         /// Authentication used CookieAuthenticationDefaults.AuthenticationScheme
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static ClaimsIdentity SetUserData<T>(T user)
+        public static ClaimsIdentity SetUserData<TUser>(TUser user)
         {
             return SetUserData(user, CookieAuthenticationDefaults.AuthenticationScheme);
         }
@@ -268,10 +277,11 @@ namespace ClassLibrary.Security
         /// Set the claims for the user
         /// Authentication used CookieAuthenticationDefaults.AuthenticationScheme
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="displayName">Who is the property to show default like user name in the Identity</param>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static ClaimsIdentity SetUserData<T>(string displayName, T user)
+        public static ClaimsIdentity SetUserData<TUser>(string displayName, TUser user)
         {
             return SetUserData(user, CookieAuthenticationDefaults.AuthenticationScheme, displayName);
         }
@@ -279,10 +289,11 @@ namespace ClassLibrary.Security
         /// <summary>
         /// Set the claims for the user
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="user"></param>
         /// <param name="authenticationType">Set what authentication will used</param>
         /// <returns></returns>
-        public static ClaimsIdentity SetUserData<T>(T user, string authenticationType)
+        public static ClaimsIdentity SetUserData<TUser>(TUser user, string authenticationType)
         {
             return SetUserData(user, authenticationType, "name");
         }
@@ -290,15 +301,16 @@ namespace ClassLibrary.Security
         /// <summary>
         /// Set the claims for the user
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="user"></param>
         /// <param name="authenticationType">Set what authentication will used</param>
         /// <param name="displayName">Who is the property to show default like user name in the Identity</param>
         /// <returns></returns>
-        public static List<Claim> SetClaims<T>(T user, string authenticationType, string displayName)
+        public static List<Claim> SetClaims<TUser>(TUser user, string authenticationType, string displayName)
         {
             List<Claim> claims = new List<Claim>();
             //use reflexion to get dynamic the properties about the user object
-            PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo[] properties = typeof(TUser).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             bool foundName = false;
             foreach (PropertyInfo property in properties)
             {
@@ -357,11 +369,12 @@ namespace ClassLibrary.Security
         /// <summary>
         /// Set the claims for the user
         /// </summary>
+        /// <typeparam name="TUser"></typeparam>
         /// <param name="user"></param>
         /// <param name="authenticationType">Set what authentication will used</param>
         /// <param name="displayName">Who is the property to show default like user name in the Identity</param>
         /// <returns></returns>
-        public static ClaimsIdentity SetUserData<T>(T user, string authenticationType, string displayName)
+        public static ClaimsIdentity SetUserData<TUser>(TUser user, string authenticationType, string displayName)
         {
             List<Claim> claims = SetClaims(user, authenticationType, displayName);           
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, authenticationType);
