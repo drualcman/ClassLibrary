@@ -1,8 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ClassLibrary.Javascript
@@ -11,12 +7,12 @@ namespace ClassLibrary.Javascript
     {
         Info,
         Succes,
-        Warninig,
+        Warning,
         Danger,
         Error,
-        Waiting
+        Waiting,
+        Default,
     }
-
 
     public static class Messages
     {
@@ -61,7 +57,7 @@ namespace ClassLibrary.Javascript
                 case BoxType.Succes:
                     await jsRuntume.InvokeVoidAsync("$p.MsgSuccess", target, title, message, timeout, true);
                     break;
-                case BoxType.Warninig:
+                case BoxType.Warning:
                     await jsRuntume.InvokeVoidAsync("$p.MsgWarning", target, title, message, timeout, true);
                     break;
                 case BoxType.Danger:
@@ -158,7 +154,7 @@ namespace ClassLibrary.Javascript
                 case BoxType.Succes:
                     await jsRuntume.InvokeVoidAsync("$p.MsgSuccess", target, title, message, timeout, false);
                     break;
-                case BoxType.Warninig:
+                case BoxType.Warning:
                     await jsRuntume.InvokeVoidAsync("$p.MsgWarning", target, title, message, timeout, false);
                     break;
                 case BoxType.Danger:
@@ -171,6 +167,76 @@ namespace ClassLibrary.Javascript
                 case BoxType.Info:
                 default:
                     await jsRuntume.InvokeVoidAsync("$p.MsgInfo", target, title, message, timeout, false);
+                    break;
+            }
+        }
+        #endregion
+
+        #region custom
+        /// <summary>
+        /// Show Custom Message on the page
+        /// </summary>
+        /// <param name="type">status box to show</param>
+        /// <param name="target">parent element to eppend</param>
+        /// <param name="title">title</param>
+        /// <param name="message">notification content</param>
+        /// <returns></returns>
+        public static async ValueTask CustomMessageAsync(this IJSRuntime jsRuntime, BoxType type, string target, string title, string message) =>
+               await CustomMessageAsync(jsRuntime, type, target, title, message, 0, string.Empty);
+
+        /// <summary>
+        /// Show Custom Message on the page
+        /// </summary>
+        /// <param name="target">parent element to eppend</param>
+        /// <param name="title">title</param>
+        /// <param name="message">notification content</param>
+        /// <returns></returns>
+        public static async ValueTask CustomMessageAsync(this IJSRuntime jsRuntime, string target, string title, string message) =>
+               await CustomMessageAsync(jsRuntime, BoxType.Default, target, title, message, 0, string.Empty);
+
+        /// <summary>
+        /// Show Custom Message on the page
+        /// </summary>
+        /// <param name="target">parent element to eppend</param>
+        /// <param name="message">notification content</param>
+        /// <returns></returns>
+        public static async ValueTask CustomMessageAsync(this IJSRuntime jsRuntime, string target, string message) =>
+               await CustomMessageAsync(jsRuntime, BoxType.Default, target, string.Empty, message, 0, string.Empty);
+
+        /// <summary>
+        /// Show Custom Message on the page
+        /// </summary>
+        /// <param name="jsRuntume"></param>
+        /// <param name="type">status box to show</param>
+        /// <param name="target">parent element to eppend</param>
+        /// <param name="title">title</param>
+        /// <param name="message">notification content</param>
+        /// <param name="timeout">notification remove time</param>
+        /// <param name="classes">optional, additional classes</param>
+        /// <returns></returns>
+        public static async ValueTask CustomMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+            string target, string title, string message, int timeout, string classes)
+        {
+            switch (type)
+            {
+                case BoxType.Succes:
+                    await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-success", timeout, classes);
+                    break;
+                case BoxType.Warning:
+                    await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-warning", timeout, classes);
+                    break;
+                case BoxType.Danger:
+                case BoxType.Error:
+                    await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-danger", timeout, classes);
+                    break;
+                case BoxType.Waiting:
+                    await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-waiting", timeout, classes);
+                    break;
+                case BoxType.Info:
+                    await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-info", timeout, classes);
+                    break;
+                default:
+                    await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-default", timeout, classes);
                     break;
             }
         }
