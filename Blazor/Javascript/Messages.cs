@@ -6,7 +6,7 @@ namespace ClassLibrary.Javascript
     public enum BoxType
     {
         Info,
-        Succes,
+        Success,
         Warning,
         Danger,
         Error,
@@ -54,7 +54,7 @@ namespace ClassLibrary.Javascript
         {
             switch (type)
             {
-                case BoxType.Succes:
+                case BoxType.Success:
                     await jsRuntume.InvokeVoidAsync("$p.MsgSuccess", target, title, message, timeout, true);
                     break;
                 case BoxType.Warning:
@@ -151,7 +151,7 @@ namespace ClassLibrary.Javascript
         {
             switch (type)
             {
-                case BoxType.Succes:
+                case BoxType.Success:
                     await jsRuntume.InvokeVoidAsync("$p.MsgSuccess", target, title, message, timeout, false);
                     break;
                 case BoxType.Warning:
@@ -219,7 +219,7 @@ namespace ClassLibrary.Javascript
         {
             switch (type)
             {
-                case BoxType.Succes:
+                case BoxType.Success:
                     await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-success", timeout, classes);
                     break;
                 case BoxType.Warning:
