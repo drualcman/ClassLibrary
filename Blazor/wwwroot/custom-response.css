@@ -1,0 +1,86 @@
+﻿body .ct-notification {
+    border: 1px solid #dedede;
+    border-radius: 20px;
+    background: #fff;
+    color: #333;
+    padding: 20px;
+    position: relative;
+    text-align: left;
+}
+
+    body .ct-notification .close {
+        background: #eeeded;
+        border-radius: 50%;
+        color: #888;
+        cursor: pointer;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        height: 30px;
+        width: 30px;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+
+    body .ct-notification > div:not(:last-child) {
+        margin-bottom: 5px;
+    }
+
+    body .ct-notification .cst-title {
+        font-size: 1.2em;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    body .ct-notification .cst-content {
+        font-size: 0.95em;
+        color: #444;
+        word-wrap: break-word;
+    }
+
+    body .ct-notification.is-danger {
+        border: none;
+        background: #e65050;
+        color: #fff;
+    }
+
+        body .ct-notification.is-danger .cst-content {
+            color: #fff;
+        }
+
+    body .ct-notification.is-warning {
+        border: none;
+        background: #FFE08A;
+        color: #333;
+    }
+
+        body .ct-notification.is-warning .cst-content {
+            color: #333;
+        }
+
+    body .ct-notification.is-success {
+        border: none;
+        background: #48C78E;
+        color: #fff;
+    }
+
+        body .ct-notification.is-success .cst-content {
+            color: #fff;
+        }
+
+    body .ct-notification.is-info {
+        border: none;
+        background: #3E8ED0;
+        color: #fff;
+    }
+
+        body .ct-notification.is-info .cst-content {
+            color: #fff;
+        }
