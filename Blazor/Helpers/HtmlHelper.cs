@@ -6,7 +6,8 @@ namespace ClassLibrary.Helpers
     {
         public static MarkupString ToHtml(this string content)
         {
-            MarkupString result = new MarkupString(content);
+            string addBr = content.Replace(System.Environment.NewLine, "<br/>").Replace("\n\r", "<br/>");
+            MarkupString result = new MarkupString(addBr);
             return result;
         }
     }
