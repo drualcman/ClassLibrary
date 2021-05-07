@@ -14,7 +14,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntime"></param>
         /// <param name="message">message to show</param>
         /// <returns></returns>
-        public static ValueTask<bool> Confirm(this IJSRuntime jsRuntime, string message) => 
+        public static ValueTask<bool> Confirm(this IJSRuntime jsRuntime, string message) =>
             jsRuntime.InvokeAsync<bool>("confirm", message);
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntime"></param>
         /// <param name="dom">Elemtn Id</param>
         /// <returns></returns>
-        public static ValueTask Focus(this IJSRuntime jsRuntime, string dom)=> 
+        public static ValueTask Focus(this IJSRuntime jsRuntime, string dom) =>
             jsRuntime.InvokeVoidAsync("$p.Focus", dom);
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace ClassLibrary.Javascript
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static ValueTask<string> TimeZone(this IJSRuntime jsRuntime) => 
+        public static ValueTask<string> TimeZone(this IJSRuntime jsRuntime) =>
             jsRuntime.InvokeAsync<string>("getBrowserTimeZoneIdentifier");
 
         /// <summary>
@@ -59,7 +59,23 @@ namespace ClassLibrary.Javascript
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static ValueTask<string> TimeZoneOffset(this IJSRuntime jsRuntime) => 
+        public static ValueTask<string> TimeZoneOffset(this IJSRuntime jsRuntime) =>
             jsRuntime.InvokeAsync<string>("getBrowserTimeZoneOffset");
+
+        /// <summary>
+        /// Get the with from the window
+        /// </summary>
+        /// <param name="jsRuntime"></param>
+        /// <returns></returns>
+        public static ValueTask<int> GetWidth(this IJSRuntime jsRuntime) =>
+            jsRuntime.InvokeAsync<int>("browserJsFunctions.Width");
+
+        /// <summary>
+        /// Get the Height from the window
+        /// </summary>
+        /// <param name="jsRuntime"></param>
+        /// <returns></returns>
+        public static ValueTask<int> GetHeight(this IJSRuntime jsRuntime) =>
+            jsRuntime.InvokeAsync<int>("browserJsFunctions.Height");
     }
 }
