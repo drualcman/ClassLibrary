@@ -5,7 +5,7 @@
      * @param {string} title notification title
      * @param {string} message notification message
      * @param {string} status notification status ex. is-danger
-     * @param {number} timeout countdown time to remove the notification
+     * @param {number} timeout countdown time to remove the notification in seconds
      * @param {string} classes optional, additional classes
      */
     window.CustomMessage = (target, title, message, status, timeout, classes) => {

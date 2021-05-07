@@ -11,5 +11,7 @@
         getBrowserTimeZoneIdentifier: () => {
             return Intl.DateTimeFormat().resolvedOptions().timeZone;
         },
+        Width: () => window.innerWidth,
+        Height: () => window.innerHeight
     };
 })();
