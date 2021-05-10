@@ -75,9 +75,9 @@ namespace ClassLibrary.Security
             try
             {
                 string token = await jsRuntime.GetUserTokenAsync();
-                string payload = token.Split('.')[1];
+                string payload = Cipher.Hash.Base64.Base64UrlDecode(token.Split('.')[1]);
                 JsonElement json = JsonSerializer.Deserialize<JsonElement>(payload);
-                DateTime expired = DateTime.FromFileTimeUtc(json.GetProperty("exp").GetInt64());
+                DateTimeOffset expired = DateTimeOffset.FromUnixTimeSeconds(json.GetProperty("exp").GetInt64());
                 result = expired <= DateTime.Now;
             }
             catch (Exception ex)
