@@ -48,13 +48,11 @@ namespace ClassLibrary.Security
             bool result;
             try
             {
-
                 string jsonString = JsonSerializer.Serialize<TUser>(user);
                 string key = token.Split('.')[2];
                 Cipher.Secret e = new Cipher.Secret(key);
                 string jsonData = await e.EncriptAsync(jsonString);
-                await jsRuntime.LocalStorageSetAsync("blazor", jsonData);
-                await jsRuntime.LocalStorageSetAsync("token", token);
+                await jsRuntime.SetAllDataAsync(jsonData, token);
                 result = true;
             }
             catch (Exception ex)
@@ -65,6 +63,30 @@ namespace ClassLibrary.Security
             return result;
         }
 
+        /// <summary>
+        /// Login request from a model user send
+        /// Authentication used jwt authentication with token
+        /// </summary>
+        /// <param name="jsRuntime"></param>
+        /// <returns></returns>
+        public static async Task<bool> SessionExpiredAsync(IJSRuntime jsRuntime)
+        {
+            bool result;
+            try
+            {
+                string token = await jsRuntime.GetUserTokenAsync();
+                string payload = token.Split('.')[1];
+                JsonElement json = JsonSerializer.Deserialize<JsonElement>(payload);
+                DateTime expired = DateTime.FromFileTimeUtc(json.GetProperty("exp").GetInt64());
+                result = expired <= DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                result = true;
+            }
+            return result;
+        }
 
         /// <summary>
         /// Login request from a model user send
@@ -144,8 +166,7 @@ namespace ClassLibrary.Security
         /// <returns></returns>
         public static async Task SignOutAsync(IJSRuntime jsRuntime)
         {
-            await jsRuntime.LocalStorageDelAsync("blazor");
-            await jsRuntime.LocalStorageDelAsync("token");
+            await jsRuntime.DelAllDataAsync();
         }
 
         /// <summary>
@@ -181,12 +202,12 @@ namespace ClassLibrary.Security
         /// <returns></returns>
         public static async Task<TUser> GetUserAsync<TUser>(IJSRuntime jsRuntime) where TUser: new ()
         {
-            string data = await jsRuntime.LocalStorageGetAsync("blazor");
+            string data = await jsRuntime.GetUserDataAsync();
 
             if (string.IsNullOrEmpty(data)) return new TUser();
             else
             {
-                string token = await jsRuntime.LocalStorageGetAsync("token");
+                string token = await jsRuntime.GetUserTokenAsync();
                 string key = token.Split('.')[2];
                 Cipher.Secret e = new Cipher.Secret(key);
                 string jsonString = await e.DecriptAsync(data);
