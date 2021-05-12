@@ -96,6 +96,15 @@ namespace ClassLibrary.Extensions
             return response;
         }
 
+        public static async Task<HttpResponseMessage> PostAuthAsync(this HttpClient httpClient, IJSRuntime jsRuntime, string requestUri, MultipartFormDataContent value)
+        {
+            string token = await jsRuntime.GetUserTokenAsync();
+            //set the token for the authentication            
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            HttpResponseMessage response = await httpClient.PostAsync(requestUri, value);
+            return response;
+        }
+
         #endregion
     }
 }
