@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
+using System.Text.RegularExpressions;
 
 namespace ClassLibrary.Helpers
 {
@@ -10,6 +12,8 @@ namespace ClassLibrary.Helpers
             MarkupString result = new MarkupString(addBr);
             return result;
         }
+
+        public static string StripHTML(this string content) => Regex.Replace(content, "<.*?>", string.Empty);
     }
 }
 
