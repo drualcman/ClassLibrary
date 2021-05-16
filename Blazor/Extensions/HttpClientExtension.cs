@@ -46,6 +46,15 @@ namespace ClassLibrary.Extensions
             HttpResponseMessage response = await httpClient.PostAsJsonAsync(requestUri, value);
             return response;
         }
+
+        public static async Task<HttpResponseMessage> PostAuthAsync(this HttpClient httpClient, string token, string requestUri, HttpContent value)
+        {
+            //set the token for the authentication            
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            HttpResponseMessage response = await httpClient.PostAsync(requestUri, value);
+            return response;
+        }
+
         #endregion
 
         #region with JSRuntime
@@ -57,6 +66,15 @@ namespace ClassLibrary.Extensions
             //set the token for the authentication
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
+            return response;
+        }
+
+        public static async Task<HttpResponseMessage> GetAuthAsync(this HttpClient httpClient, string requestUri, IJSRuntime jsRuntime)
+        {
+            string token = await jsRuntime.GetUserTokenAsync();
+            //set the token for the authentication            
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            HttpResponseMessage response = await httpClient.GetAsync(requestUri);
             return response;
         }
 
