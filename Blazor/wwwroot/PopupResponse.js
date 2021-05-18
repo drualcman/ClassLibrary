@@ -3,7 +3,7 @@
         if (!message) return false; // No need to run
 
         status = status ?? true;
-        time = time ?? 5000;
+        time = ((time ?? 5) * 1000);
         additional = additional ?? undefined;
 
         let isContainerExist = true;
@@ -23,7 +23,7 @@
         else items = container.querySelector('.items');
 
         let item = document.createElement('div');
-        item.className = 'item';
+        item.className = `item ${status ? 'is-success' : 'is-danger'}`;
         item.innerHTML = `<div class="close-btn"><i class="fas fa-times"></i></div>
                           <div class="content">
                               ${message}

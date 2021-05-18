@@ -248,6 +248,11 @@ namespace ClassLibrary.Javascript
             await PopupResponseAsync(jsRuntume, message, status, null, null);
         }
 
+        public static async ValueTask PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int time)
+        {
+            await PopupResponseAsync(jsRuntume, message, status, time, null);
+        }
+
         public static async ValueTask PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int? time, string additional)
         {
             await jsRuntume.InvokeVoidAsync("PopupResponse", message, status, time, additional);
