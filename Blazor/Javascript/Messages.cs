@@ -243,42 +243,43 @@ namespace ClassLibrary.Javascript
         #endregion
 
         #region custom popup
+        /// <summary>
+        /// Show a small popup on the bottom right of the screen
+        /// </summary>
+        /// <param name="jsRuntume"></param>
+        /// <param name="message">message content</param>
+        /// <param name="status">popup status ex. success, danger</param>
+        /// <returns></returns>
         public static async ValueTask PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status)
         {
             await PopupResponseAsync(jsRuntume, message, status, null, null);
         }
 
+        /// <summary>
+        /// Show a small popup on the bottom right of the screen
+        /// </summary>
+        /// <param name="jsRuntume"></param>
+        /// <param name="message">message content</param>
+        /// <param name="status">popup status ex. success, danger</param>
+        /// <param name="time">time limit on showing the popup</param>
+        /// <returns></returns>
         public static async ValueTask PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int time)
         {
             await PopupResponseAsync(jsRuntume, message, status, time, null);
         }
 
+        /// <summary>
+        /// Show a small popup on the bottom right of the screen
+        /// </summary>
+        /// <param name="jsRuntume"></param>
+        /// <param name="message">message content</param>
+        /// <param name="status">popup status ex. success, danger</param>
+        /// <param name="time">time limit on showing the popup</param>
+        /// <param name="additional">additional popup design</param>
+        /// <returns></returns>
         public static async ValueTask PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int? time, string additional)
         {
             await jsRuntume.InvokeVoidAsync("PopupResponse", message, status, time, additional);
-
-            //switch (type)
-            //{
-            //    case BoxType.Success:
-            //        await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-success", timeout, classes);
-            //        break;
-            //    case BoxType.Warning:
-            //        await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-warning", timeout, classes);
-            //        break;
-            //    case BoxType.Danger:
-            //    case BoxType.Error:
-            //        await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-danger", timeout, classes);
-            //        break;
-            //    case BoxType.Waiting:
-            //        await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-waiting", timeout, classes);
-            //        break;
-            //    case BoxType.Info:
-            //        await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-info", timeout, classes);
-            //        break;
-            //    default:
-            //        await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-default", timeout, classes);
-            //        break;
-            //}
         }
         #endregion
     }

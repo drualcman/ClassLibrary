@@ -1,4 +1,11 @@
 ﻿(function () {
+    /**
+     * Show popup message on the bottom right on the screen (No dependencies)
+     * @param {string} message message shows on popup
+     * @param {boolean} status status of popup
+     * @param {number} time time limit to show
+     * @param {string} additional additional data
+     */
     window.PopupResponse = (message, status, time, additional) => {
         if (!message) return false; // No need to run
 
