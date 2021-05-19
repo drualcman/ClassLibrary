@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ClassLibrary.Helpers
@@ -13,6 +14,36 @@ namespace ClassLibrary.Helpers
         /// <returns></returns>
         public static MarkupString ToHtml(this string content)
         {
+            string addBr = content.Replace(Environment.NewLine, "<br/>").Replace("\n\r", "<br/>");
+            MarkupString result = new MarkupString(addBr);
+            return result;
+        }
+
+        /// <summary>
+        /// Convert string into a HTML markup to show correctly in the page
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public static MarkupString ToHtml(this string content, string code, string replace)
+        {            
+            return ToHtml(content, new string[] { code}, new string[] { replace});
+        }
+
+        /// <summary>
+        /// Convert string into a HTML markup to show correctly in the page
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public static MarkupString ToHtml(this string content, string[] code, string[] replace)
+        {
+            if (code.Length == replace.Length)
+            {
+                int c = code.Length;
+                for (int i = 0; i < c; i++)
+                {
+                    content = content.Replace(code[i], replace[i]);
+                }
+            }
             string addBr = content.Replace(Environment.NewLine, "<br/>").Replace("\n\r", "<br/>");
             MarkupString result = new MarkupString(addBr);
             return result;
