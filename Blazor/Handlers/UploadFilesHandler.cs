@@ -156,7 +156,7 @@ namespace ClassLibrary.Handlers
                     FileName = null;
                     if (OnUploadError is not null)
                     {
-                        OnUploadError(this, new ArgumentException("No images found", "UploadImage"));
+                        OnUploadError(this, new ArgumentException("No images found", "UploadFile"));
                     }
                 }
                 else
@@ -165,7 +165,7 @@ namespace ClassLibrary.Handlers
                     {
                         if (OnUploadError is not null)
                         {
-                            OnUploadError(this, new ArgumentException($"Max files can be selected is {this.MaxAllowedFiles}", "UploadImage"));
+                            OnUploadError(this, new ArgumentException($"Max files can be selected is {this.MaxAllowedFiles}", "UploadFile"));
                         }
                     }
                     else
@@ -201,7 +201,7 @@ namespace ClassLibrary.Handlers
 
                 if (OnUploadError is not null)
                 {
-                    OnUploadError(this, new ArgumentException($"Exception: {ex.Message}", "UploadImage"));
+                    OnUploadError(this, new ArgumentException($"Exception: {ex.Message}", "UploadFile"));
                 }
             }            
         }
