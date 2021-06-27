@@ -1,6 +1,5 @@
 ﻿using ClassLibrary.Extensions;
 using ClassLibrary.Service;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using System;
@@ -180,28 +179,38 @@ namespace ClassLibrary.Handlers
         {
             try
             {
-                if (this.MaxAllowedFiles == 1)          //if only allowed 1 file always reset the dictionary
-                    UploadedFiles = new SortedDictionary<int, FileUploadContent>();
-
-                int index = UploadedFiles.Count;
-
-                if (index < this.MaxAllowedFiles)
+                if (image.Size < this.MaxAllowedSize)
                 {
-                    //last image added is the default image to send
-                    UploadedImage = image.FileStreamContent;
-                    FileName = image.Name;
+                    if (this.MaxAllowedFiles == 1)          //if only allowed 1 file always reset the dictionary
+                        UploadedFiles = new SortedDictionary<int, FileUploadContent>();
 
-                    UploadedFiles.Add(index, image);
-                    if (OnUploadImage is not null)
+                    int index = UploadedFiles.Count;
+
+                    if (index < this.MaxAllowedFiles)
                     {
-                        OnUploadImage(this, new FileUploadEventArgs { File = image, FileIndex = index, Action = "Added" });
+                        //last image added is the default image to send
+                        UploadedImage = image.FileStreamContent;
+                        FileName = image.Name;
+
+                        UploadedFiles.Add(index, image);
+                        if (OnUploadImage is not null)
+                        {
+                            OnUploadImage(this, new FileUploadEventArgs { File = image, FileIndex = index, Action = "Added" });
+                        }
+                    }
+                    else
+                    {
+                        if (OnUploadError is not null)
+                        {
+                            OnUploadError(this, new ArgumentException($"Max files is {this.MaxAllowedFiles}", "Add"));
+                        }
                     }
                 }
                 else
                 {
                     if (OnUploadError is not null)
                     {
-                        OnUploadError(this, new ArgumentException($"Max files is {this.MaxAllowedFiles}", "Add"));
+                        OnUploadError(this, new ArgumentException($"File {image.Name} overload {this.MaxAllowedSize}", "Add"));
                     }
                 }
             }
@@ -465,7 +474,7 @@ namespace ClassLibrary.Handlers
         /// <param name="content"></param>
         /// <param name="field"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadImagesAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
+        private async Task<TModel> UploadImagesAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
             string field = "files", bool ignoreFiles = false)
         {
             if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
@@ -513,7 +522,6 @@ namespace ClassLibrary.Handlers
         public async Task<bool> DeleteImageAsync(string endPoint, string filename, string field)
         {
             if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
-            if (JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
             if (string.IsNullOrEmpty(filename)) return false;
 
             using MultipartFormDataContent content = new MultipartFormDataContent();
@@ -635,7 +643,7 @@ namespace ClassLibrary.Handlers
         /// <param name="content"></param>
         /// <param name="field"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadImagesAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
+        private async Task<TModel> UploadImagesAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
             string field = "files", bool ignoreFiles = false)
         {
             if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
