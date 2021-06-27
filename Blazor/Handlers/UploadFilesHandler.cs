@@ -54,12 +54,48 @@ namespace ClassLibrary.Handlers
         /// <summary>
         /// Return first image from the dictionary
         /// </summary>
-        public FileUploadContent First => UploadedFiles[UploadedFiles.Count - 1];
+        public FileUploadContent First
+        {
+            get
+            {
+                int c = UploadedFiles.Count;
+                if (c > 0)
+                {
+                    return UploadedFiles[0];
+                }
+                else
+                {
+                    if (OnUploadError is not null)
+                    {
+                        OnUploadError(this, new ArgumentException("No images found", "First"));
+                    }
+                    return null;
+                }
+            }
+        }
 
         /// <summary>
         /// Return last image from the dictionary
         /// </summary>
-        public FileUploadContent Last => UploadedFiles[UploadedFiles.Count - 1];
+        public FileUploadContent Last
+        {
+            get
+            {
+                int c = UploadedFiles.Count;
+                if (c > 0)
+                {
+                    return UploadedFiles[c - 1];
+                }
+                else
+                {
+                    if (OnUploadError is not null)
+                    {
+                        OnUploadError(this, new ArgumentException("No images found", "Last"));
+                    }
+                    return null;
+                }
+            }
+        }
 
         /// <summary>
         /// Return how many images have stored
@@ -712,11 +748,11 @@ namespace ClassLibrary.Handlers
             {
                 if (disposing)
                 {
-                    UploadedImage.Dispose();
+                    UploadedImage?.Dispose();
                     int c = UploadedFiles.Count;
                     for (int i = 0; i < c; i++)
                     {
-                        UploadedFiles[i].FileStreamContent.Dispose();
+                        UploadedFiles[i]?.FileStreamContent?.Dispose();
                     }
                 }
 
