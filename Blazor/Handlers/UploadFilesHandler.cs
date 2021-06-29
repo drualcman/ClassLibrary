@@ -406,7 +406,7 @@ namespace ClassLibrary.Handlers
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, string field = "files", bool ignoreFiles = true)
+        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, string field = "files")
         {
             if (UploadedImage is not null)
             {
@@ -416,7 +416,7 @@ namespace ClassLibrary.Handlers
                     name: field,
                     fileName: FileName
                 );
-                return await UploadFilesAsync<TModel>(urlEndPoint, content, field, ignoreFiles);
+                return await UploadFilesAsync<TModel>(urlEndPoint, content, true, field);
             }
             else
             {
@@ -435,8 +435,8 @@ namespace ClassLibrary.Handlers
         /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, InputFileChangeEventArgs files, string field = "files", bool ignoreFiles = false) =>
-            await UploadAsync<TModel>(urlEndPoint, new MultipartFormDataContent(), files, field, ignoreFiles);
+        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, InputFileChangeEventArgs files, string field = "files") =>
+            await UploadAsync<TModel>(urlEndPoint, new MultipartFormDataContent(), files, field);
 
         /// <summary>
         /// Upload a image using the endpoint send
@@ -446,7 +446,7 @@ namespace ClassLibrary.Handlers
         /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, string field = "files", bool ignoreFiles = false)
+        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, string field = "files")
         {
             if (UploadedImage is not null)
             {
@@ -456,7 +456,7 @@ namespace ClassLibrary.Handlers
                     fileName: FileName
                 );
             }
-            return await UploadFilesAsync<TModel>(urlEndPoint, content, field, ignoreFiles);            
+            return await UploadFilesAsync<TModel>(urlEndPoint, content, true, field);            
         }
 
         /// <summary>
@@ -467,10 +467,10 @@ namespace ClassLibrary.Handlers
         /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, InputFileChangeEventArgs files, string field = "files", bool ignoreFiles = false)
+        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, InputFileChangeEventArgs files, string field = "files")
         {
             UploadFile(files);
-            return await UploadFilesAsync<TModel>(urlEndPoint, content, field, ignoreFiles);
+            return await UploadFilesAsync<TModel>(urlEndPoint, content, false, field);
         }
 
         /// <summary>
@@ -482,14 +482,14 @@ namespace ClassLibrary.Handlers
         /// <param name="fileName"></param>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,  StreamContent file, string fileName = "", string field = "files", bool ignoreFiles = true)
+        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,  StreamContent file, string fileName = "", string field = "files")
         {
             if (file is not null)
             {
                 content.Add(
                     content: file,
                     name: field,
-                    fileName: string.IsNullOrEmpty(fileName) ? Guid.NewGuid().ToString() : fileName
+                    fileName: string.IsNullOrEmpty(fileName) ? FileName : fileName
                 );
             }
             else
@@ -499,7 +499,7 @@ namespace ClassLibrary.Handlers
                     OnUploadError(this, new ArgumentException($"No files to upload", "UploadImageAsync"));
                 }
             }
-            return await UploadFilesAsync<TModel>(urlEndPoint, content, field, ignoreFiles);
+            return await UploadFilesAsync<TModel>(urlEndPoint, content, true, field);
         }
 
         /// <summary>
@@ -511,7 +511,7 @@ namespace ClassLibrary.Handlers
         /// <param name="field"></param>
         /// <returns></returns>
         private async Task<TModel> UploadFilesAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
-            string field = "files", bool ignoreFiles = false)
+            bool ignoreFiles, string field = "files")
         {
             if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
             if (!ignoreFiles)
@@ -575,7 +575,7 @@ namespace ClassLibrary.Handlers
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, string field = "files", bool ignoreFiles = true)
+        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, string field = "files")
         {
             if (UploadedImage is not null)
             {
@@ -585,7 +585,7 @@ namespace ClassLibrary.Handlers
                     name: field,
                     fileName: FileName
                 );
-                return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, field, ignoreFiles);
+                return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, true, field);
             }
             else
             {
@@ -604,8 +604,8 @@ namespace ClassLibrary.Handlers
         /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, InputFileChangeEventArgs files, string field = "files", bool ignoreFiles = false) =>
-            await UploadAuthAsync<TModel>(urlEndPoint, new MultipartFormDataContent(), files, field, ignoreFiles);
+        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, InputFileChangeEventArgs files, string field = "files") =>
+            await UploadAuthAsync<TModel>(urlEndPoint, new MultipartFormDataContent(), files, field);
 
         /// <summary>
         /// Upload a image using the endpoint send
@@ -615,7 +615,7 @@ namespace ClassLibrary.Handlers
         /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, string field = "files", bool ignoreFiles = false)
+        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, string field = "files")
         {
             if (UploadedImage is not null)
             {
@@ -625,7 +625,7 @@ namespace ClassLibrary.Handlers
                     fileName: FileName
                 );
             }
-            return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, field, ignoreFiles);
+            return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, true, field);
         }
 
         /// <summary>
@@ -636,10 +636,10 @@ namespace ClassLibrary.Handlers
         /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
         /// <returns></returns>
-        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, InputFileChangeEventArgs files, string field = "files", bool ignoreFiles = false)
+        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, InputFileChangeEventArgs files, string field = "files")
         {
             UploadFile(files);
-            return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, field, ignoreFiles);
+            return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, false, field);
         }
 
         /// <summary>
@@ -658,7 +658,7 @@ namespace ClassLibrary.Handlers
                 content.Add(
                     content: file,
                     name: field,
-                    fileName: string.IsNullOrEmpty(fileName) ? Guid.NewGuid().ToString() : fileName
+                    fileName: string.IsNullOrEmpty(fileName) ? FileName : fileName
                 );
             }
             else
@@ -668,7 +668,7 @@ namespace ClassLibrary.Handlers
                     OnUploadError(this, new ArgumentException($"No files to upload", "UploadImageAsync"));
                 }
             }
-            return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, field, ignoreFiles);
+            return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, ignoreFiles, field);
         }
 
         /// <summary>
@@ -680,7 +680,7 @@ namespace ClassLibrary.Handlers
         /// <param name="field"></param>
         /// <returns></returns>
         private async Task<TModel> UploadFilesAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
-            string field = "files", bool ignoreFiles = false)
+            bool ignoreFiles, string field = "files")
         {
             if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
             if (JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
