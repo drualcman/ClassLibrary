@@ -31,7 +31,10 @@ namespace ClassLibrary.Handlers
         /// Can upload files
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="maxFiles">number maximum of the files will send. Default 5</param>
+        /// <param name="httpClient"></param>
+        /// <param name="jSRuntime"></param>
+        /// <param name="maxFiles">Maximum files allowed to upload</param>
+        /// <param name="maxSize">Maximum file size to upload</param>
         public UploadFilesHandler(IDefaultServices services = null, HttpClient httpClient = null, IJSRuntime jSRuntime = null, int maxFiles = 5, int maxSize = 512000)
         {
             if (services is not null)
@@ -48,8 +51,19 @@ namespace ClassLibrary.Handlers
         #endregion
 
         #region properties
-        // Define the indexer to allow client code to use [] notation to access directly to the file.
-        public FileUploadContent this[int i] => UploadedFiles[i];
+        /// <summary>
+        /// Define the indexer to allow client code to use [] notation to access directly to the file. 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public FileUploadContent this[int index] => UploadedFiles[index];
+
+        /// <summary>
+        /// Define the indexer to allow client code to use [] notation to access directly to the file by file name. 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public FileUploadContent this[string fileName] => UploadedFiles.First(n=>n.Value.Name == fileName).Value;
 
         /// <summary>
         /// Return first image from the dictionary
@@ -102,7 +116,6 @@ namespace ClassLibrary.Handlers
         /// </summary>
         public int Count => UploadedFiles.Count;
 
-
         /// <summary>
         /// Return total file size uploaded
         /// </summary>
@@ -128,20 +141,30 @@ namespace ClassLibrary.Handlers
         /// <summary>
         /// Event to notify each file uploaded
         /// </summary>
-        public event UploadEventHandler OnUploadImage;
+        public event UploadEventHandler OnUploadFile;
 
         /// <summary>
-        /// Event to notify errors occurs
+        /// Event to notify all files are uploaded
         /// </summary>
         public event UploadsEventHandler OnUploaded;
 
         /// <summary>
-        /// Event to notify each file uploaded
+        /// Event to notify errors occurs
         /// </summary>
         public event UploadErrorEventHandler OnUploadError;
         #endregion
 
         #region methods to manage files
+        /// <summary>
+        /// Foreach enumerator to get all the files
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<FileUploadContent> GetEnumerator()
+        {
+            foreach (var item in UploadedFiles)
+                yield return item.Value;
+        }
+
         /// <summary>
         /// Use with InputFile OnChange
         /// </summary>
@@ -198,7 +221,6 @@ namespace ClassLibrary.Handlers
             }
             catch (Exception ex)
             {
-
                 if (OnUploadError is not null)
                 {
                     OnUploadError(this, new ArgumentException($"Exception: {ex.Message}", "UploadFile"));
@@ -229,9 +251,9 @@ namespace ClassLibrary.Handlers
                         FileName = image.Name;
 
                         UploadedFiles.Add(index, image);
-                        if (OnUploadImage is not null)
+                        if (OnUploadFile is not null)
                         {
-                            OnUploadImage(this, new FileUploadEventArgs { File = image, FileIndex = index, Action = "Added" });
+                            OnUploadFile(this, new FileUploadEventArgs { File = image, FileIndex = index, Action = "Added" });
                         }
                     }
                     else
@@ -261,19 +283,19 @@ namespace ClassLibrary.Handlers
         }
 
         /// <summary>
-        /// UJpdate image by index
+        /// Update image by index
         /// </summary>
         /// <param name="image"></param>
         public void Update(int index, FileUploadContent image)
         {
-            if (OnUploadImage is not null)
+            if (OnUploadFile is not null)
             {
-                OnUploadImage(this, new FileUploadEventArgs { File = this[index], FileIndex = index, Action = "Updating" });
+                OnUploadFile(this, new FileUploadEventArgs { File = this[index], FileIndex = index, Action = "Updating" });
             }
             UploadedFiles[index] = image;
-            if (OnUploadImage is not null)
+            if (OnUploadFile is not null)
             {
-                OnUploadImage(this, new FileUploadEventArgs { File = image, FileIndex = index, Action = "Updated" });
+                OnUploadFile(this, new FileUploadEventArgs { File = image, FileIndex = index, Action = "Updated" });
             }
         }
 
@@ -324,16 +346,16 @@ namespace ClassLibrary.Handlers
             bool result = UploadedFiles.Remove(index);
             if (result)
             {
-                if (OnUploadImage is not null)
+                if (OnUploadFile is not null)
                 {
-                    OnUploadImage(this, new FileUploadEventArgs { File = selection, FileIndex = index, Action = "Removed" });
+                    OnUploadFile(this, new FileUploadEventArgs { File = selection, FileIndex = index, Action = "Removed" });
                 }
             }
             else
             {
-                if (OnUploadImage is not null)
+                if (OnUploadFile is not null)
                 {
-                    OnUploadImage(this, new FileUploadEventArgs { File = selection, FileIndex = index, Action = "Remove failed" });
+                    OnUploadFile(this, new FileUploadEventArgs { File = selection, FileIndex = index, Action = "Remove failed" });
                 }
             }
             return result;
@@ -388,11 +410,19 @@ namespace ClassLibrary.Handlers
             JSRuntime = services.JsRuntime;
         }
 
+        /// <summary>
+        /// Set HttpClient if is not from the constructor
+        /// </summary>
+        /// <param name="httpClient"></param>
         public void SetHttpClient(HttpClient httpClient)
         {
             HttpClient = httpClient;
         }
 
+        /// <summary>
+        /// Set IJSRuntime if it's not from the constructor
+        /// </summary>
+        /// <param name="jSRuntime"></param>
         public void SetIJSRuntime(IJSRuntime jSRuntime)
         {
             JSRuntime = jSRuntime;
@@ -405,6 +435,7 @@ namespace ClassLibrary.Handlers
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
         /// <param name="urlEndPoint"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, string field = "files")
         {
@@ -427,13 +458,13 @@ namespace ClassLibrary.Handlers
                 return default(TModel);
             }
         }
-        
+
         /// <summary>
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, InputFileChangeEventArgs files, string field = "files") =>
             await UploadAsync<TModel>(urlEndPoint, new MultipartFormDataContent(), files, field);
@@ -442,9 +473,9 @@ namespace ClassLibrary.Handlers
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="content">form content to send to the url end point</param>
-        /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
+        /// <param name="content">form content to send to the url end point</param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, string field = "files")
         {
@@ -463,9 +494,10 @@ namespace ClassLibrary.Handlers
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
+        /// <param name="urlEndPoint"></param>
         /// <param name="content">form content to send to the url end point</param>
         /// <param name="files"></param>
-        /// <param name="urlEndPoint"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, InputFileChangeEventArgs files, string field = "files")
         {
@@ -477,10 +509,11 @@ namespace ClassLibrary.Handlers
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
+        /// <param name="urlEndPoint"></param>
         /// <param name="content">form content to send to the url end point</param>
         /// <param name="file"></param>
         /// <param name="fileName"></param>
-        /// <param name="urlEndPoint"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,  StreamContent file, string fileName = "", string field = "files")
         {
@@ -509,6 +542,7 @@ namespace ClassLibrary.Handlers
         /// <param name="urlEndPoint"></param>
         /// <param name="content"></param>
         /// <param name="field"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         private async Task<TModel> UploadFilesAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
             bool ignoreFiles, string field = "files")
@@ -543,7 +577,7 @@ namespace ClassLibrary.Handlers
         /// </summary>
         /// <param name="endPoint">Must be return boolean the endpoint</param>
         /// <param name="index"></param>
-        /// <param name="field">name the endpoint are expecting to send the file name</param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<bool> DeleteAsync(string endPoint, int index, string field) =>
             await DeleteAsync(endPoint, this[index].Name, field);
@@ -553,7 +587,7 @@ namespace ClassLibrary.Handlers
         /// </summary>
         /// <param name="endPoint">Must be return boolean the endpoint</param>
         /// <param name="filename"></param>
-        /// <param name="field">name the endpoint are expecting to send the file name</param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<bool> DeleteAsync(string endPoint, string filename, string field)
         {
@@ -574,6 +608,7 @@ namespace ClassLibrary.Handlers
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
         /// <param name="urlEndPoint"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, string field = "files")
         {
@@ -601,8 +636,9 @@ namespace ClassLibrary.Handlers
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
+        /// <param name="files"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, InputFileChangeEventArgs files, string field = "files") =>
             await UploadAuthAsync<TModel>(urlEndPoint, new MultipartFormDataContent(), files, field);
@@ -611,9 +647,9 @@ namespace ClassLibrary.Handlers
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="content">form content to send to the url end point</param>
-        /// <param name="files"></param>
         /// <param name="urlEndPoint"></param>
+        /// <param name="content">form content to send to the url end point</param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, string field = "files")
         {
@@ -632,9 +668,10 @@ namespace ClassLibrary.Handlers
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
+        /// <param name="urlEndPoint"></param>
         /// <param name="content">form content to send to the url end point</param>
         /// <param name="files"></param>
-        /// <param name="urlEndPoint"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, InputFileChangeEventArgs files, string field = "files")
         {
@@ -646,10 +683,11 @@ namespace ClassLibrary.Handlers
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
+        /// <param name="urlEndPoint"></param>
         /// <param name="content">form content to send to the url end point</param>
         /// <param name="file"></param>
         /// <param name="fileName"></param>
-        /// <param name="urlEndPoint"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, StreamContent file, string fileName = "", string field = "files", bool ignoreFiles = true)
         {
@@ -677,7 +715,7 @@ namespace ClassLibrary.Handlers
         /// <typeparam name="TModel"></typeparam>
         /// <param name="urlEndPoint"></param>
         /// <param name="content"></param>
-        /// <param name="field"></param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         private async Task<TModel> UploadFilesAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
             bool ignoreFiles, string field = "files")
@@ -713,7 +751,7 @@ namespace ClassLibrary.Handlers
         /// </summary>
         /// <param name="endPoint">Must be return boolean the endpoint</param>
         /// <param name="index"></param>
-        /// <param name="field">name the endpoint are expecting to send the file name</param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<bool> DeleteAuthAsync(string endPoint, int index, string field) =>
             await DeleteAuthAsync(endPoint, this[index].Name, field);
@@ -723,7 +761,7 @@ namespace ClassLibrary.Handlers
         /// </summary>
         /// <param name="endPoint">Must be return boolean the endpoint</param>
         /// <param name="filename"></param>
-        /// <param name="field">name the endpoint are expecting to send the file name</param>
+        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
         public async Task<bool> DeleteAuthAsync(string endPoint, string filename, string field)
         {
@@ -774,8 +812,17 @@ namespace ClassLibrary.Handlers
     /// </summary>
     public class FileUploadEventArgs : EventArgs
     {
+        /// <summary>
+        /// File uploaded with all the data
+        /// </summary>
         public FileUploadContent File { get; set; }
+        /// <summary>
+        /// Index in the object
+        /// </summary>
         public int FileIndex { get; set; }
+        /// <summary>
+        /// Action used
+        /// </summary>
         public string Action { get; set; }
     }
 
@@ -784,35 +831,48 @@ namespace ClassLibrary.Handlers
     /// </summary>
     public class FilesUploadEventArgs : EventArgs
     {
+        /// <summary>
+        /// Files uploaded
+        /// </summary>
         public SortedDictionary<int, FileUploadContent> Files { get; set; }
+        /// <summary>
+        /// Total size of all the files uploated
+        /// </summary>
         public long Size { get; set; }
+        /// <summary>
+        /// Number of the files uploated
+        /// </summary>
         public int Count { get; set; }
+        /// <summary>
+        /// Action used
+        /// </summary>
         public string Action { get; set; }
     }
-
 
     /// <summary>
     /// Manage the file upload
     /// </summary>
     public class FileUploadContent
     {
-        //
-        // Summary:
-        //     The name of the file as specified by the browser.
+        /// <summary>
+        /// The name of the file as specified by the browser.
+        /// </summary>
         public string Name { get; set; }
-        //
-        // Summary:
-        //     The last modified date as specified by the browser.
+        /// <summary>
+        /// The last modified date as specified by the browser.
+        /// </summary>
         public DateTimeOffset LastModified { get; set; }
-        //
-        // Summary:
-        //     The size of the file in bytes as specified by the browser.
+        /// <summary>
+        /// The size of the file in bytes as specified by the browser.
+        /// </summary>
         public long Size { get; set; }
-        //
-        // Summary:
-        //     The MIME type of the file as specified by the browser.
+        /// <summary>
+        /// The MIME type of the file as specified by the browser.
+        /// </summary>
         public string ContentType { get; set; }
-
+        /// <summary>
+        /// File bites
+        /// </summary>
         public StreamContent FileStreamContent { get; set; }
     }
 
