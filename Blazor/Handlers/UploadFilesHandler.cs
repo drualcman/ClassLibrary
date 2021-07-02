@@ -214,7 +214,7 @@ namespace ClassLibrary.Handlers
 
                         if (OnUploaded is not null)
                         {
-                            OnUploaded(this, new FilesUploadEventArgs { Files = UploadedFiles, Count = files, Size = size, Action = "Added" });
+                            OnUploaded(this, new FilesUploadEventArgs { Files = UploadedFiles, Count = files + 1, Size = size, Action = "Added" });
                         }
                     }
                 }
