@@ -6,9 +6,9 @@
     <AssemblyName>ClassLibrary</AssemblyName>
   </PropertyGroup>
 
-
   <ItemGroup>
-    <PackageReference Include="DrUalcman-Cipher" Version="1.2.8" />
+    <PackageReference Include="BlazorInputFileExtended" Version="1.0.1" />
+    <PackageReference Include="DrUalcman-Cipher" Version="1.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.7" />

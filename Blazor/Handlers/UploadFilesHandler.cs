@@ -1,29 +1,19 @@
-﻿using ClassLibrary.Extensions;
+﻿using BlazorInputFileExtended;
+using ClassLibrary.Extensions;
 using ClassLibrary.Service;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace ClassLibrary.Handlers
 {
-    public class UploadFilesHandler : IDisposable
+    public class UploadFilesHandler : InputFileHandler
     {
         #region variables
-        private HttpClient HttpClient;
         private IJSRuntime JSRuntime;
-
-        int MaxAllowedFiles;
-        int MaxAllowedSize;
-        
-        /// <summary>
-        /// All files uploaded
-        /// </summary>
-        private SortedDictionary<int, FileUploadContent> UploadedFiles = new SortedDictionary<int, FileUploadContent>();
         #endregion
 
         #region constructor
@@ -35,368 +25,40 @@ namespace ClassLibrary.Handlers
         /// <param name="jSRuntime"></param>
         /// <param name="maxFiles">Maximum files allowed to upload</param>
         /// <param name="maxSize">Maximum file size to upload</param>
-        public UploadFilesHandler(IDefaultServices services = null, HttpClient httpClient = null, IJSRuntime jSRuntime = null, int maxFiles = 5, int maxSize = 512000)
+        public UploadFilesHandler(IDefaultServices services = null, HttpClient httpClient = null, IJSRuntime jSRuntime = null, int maxFiles = 5, long maxSize = 512000) : 
+            base(httpClient, maxFiles, maxSize)
         {
             if (services is not null)
             {
                 HttpClient = services.Client ?? httpClient;
                 JSRuntime = services.JsRuntime ?? jSRuntime;
             }
-            if (httpClient is not null) HttpClient = httpClient;
             if (jSRuntime is not null) JSRuntime = jSRuntime;
 
-            MaxAllowedFiles = maxFiles;
-            MaxAllowedSize = maxSize;
         }
         #endregion
 
-        #region properties
-        /// <summary>
-        /// Define the indexer to allow client code to use [] notation to access directly to the file. 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public FileUploadContent this[int index] => UploadedFiles[index];
-
-        /// <summary>
-        /// Define the indexer to allow client code to use [] notation to access directly to the file by file name. 
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public FileUploadContent this[string fileName] => UploadedFiles.First(n=>n.Value.Name == fileName).Value;
-
-        /// <summary>
-        /// Return first image from the dictionary
-        /// </summary>
-        public FileUploadContent First
-        {
-            get
-            {
-                int c = UploadedFiles.Count;
-                if (c > 0)
-                {
-                    return UploadedFiles[0];
-                }
-                else
-                {
-                    if (OnUploadError is not null)
-                    {
-                        OnUploadError(this, new ArgumentException("No images found", "First"));
-                    }
-                    return null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Return last image from the dictionary
-        /// </summary>
-        public FileUploadContent Last
-        {
-            get
-            {
-                int c = UploadedFiles.Count;
-                if (c > 0)
-                {
-                    return UploadedFiles[c - 1];
-                }
-                else
-                {
-                    if (OnUploadError is not null)
-                    {
-                        OnUploadError(this, new ArgumentException("No images found", "Last"));
-                    }
-                    return null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Return how many images have stored
-        /// </summary>
-        public int Count => UploadedFiles.Count;
-
-        /// <summary>
-        /// Return total file size uploaded
-        /// </summary>
-        public long Size => UploadedFiles.Sum(s => s.Value.Size);
-        #endregion
-
-        #region fields
-        /// <summary>
-        /// Last File stream uploaded
-        /// </summary>
-        public StreamContent UploadedImage;
-        /// <summary>
-        /// Last File name uploaded
-        /// </summary>
-        public string FileName;
-        #endregion
 
         #region events
-        public delegate void UploadEventHandler(object sender, FileUploadEventArgs e);
-        public delegate void UploadsEventHandler(object sender, FilesUploadEventArgs e);
-        public delegate void UploadErrorEventHandler(object sender, ArgumentException e);
-
         /// <summary>
         /// Event to notify each file uploaded
         /// </summary>
-        public event UploadEventHandler OnUploadFile;
+        public override event UploadEventHandler OnUploadFile;
 
         /// <summary>
         /// Event to notify all files are uploaded
         /// </summary>
-        public event UploadsEventHandler OnUploaded;
+        public override event UploadsEventHandler OnUploaded;
 
         /// <summary>
         /// Event to notify errors occurs
         /// </summary>
-        public event UploadErrorEventHandler OnUploadError;
-        #endregion
-
-        #region methods to manage files
-        /// <summary>
-        /// Foreach enumerator to get all the files
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<FileUploadContent> GetEnumerator()
-        {
-            foreach (var item in UploadedFiles)
-                yield return item.Value;
-        }
+        public override event UploadErrorEventHandler OnUploadError;
 
         /// <summary>
-        /// Use with InputFile OnChange
+        /// Event to notify errors occurs uploading to the api
         /// </summary>
-        /// <param name="e">InputFileChangeEventArgs</param>
-        public void UploadFile(InputFileChangeEventArgs e)
-        {
-            try
-            {
-                if (e.FileCount == 0)
-                {
-                    UploadedImage = null;
-                    FileName = null;
-                    if (OnUploadError is not null)
-                    {
-                        OnUploadError(this, new ArgumentException("No images found", "UploadFile"));
-                    }
-                }
-                else
-                {
-                    if (e.FileCount > this.MaxAllowedFiles)
-                    {
-                        if (OnUploadError is not null)
-                        {
-                            OnUploadError(this, new ArgumentException($"Max files can be selected is {this.MaxAllowedFiles}", "UploadFile"));
-                        }
-                    }
-                    else
-                    {
-                        if (this.MaxAllowedFiles == 1)          //if only allowed 1 file always reset the dictionary
-                            UploadedFiles = new SortedDictionary<int, FileUploadContent>();
-
-                        int files = UploadedFiles.Count - 1;
-                        long size = 0;
-                        foreach (IBrowserFile file in e.GetMultipleFiles(maximumFileCount: MaxAllowedFiles))
-                        {
-                            size += file.Size;
-                            Add(new FileUploadContent
-                            {
-                                Name = file.Name,
-                                LastModified = file.LastModified,
-                                Size = file.Size,
-                                ContentType = file.ContentType,
-                                FileStreamContent = new StreamContent(file.OpenReadStream(maxAllowedSize: MaxAllowedSize))
-                            });
-                            files++;
-                        }
-
-                        if (OnUploaded is not null)
-                        {
-                            OnUploaded(this, new FilesUploadEventArgs { Files = UploadedFiles, Count = files + 1, Size = size, Action = "Added" });
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                if (OnUploadError is not null)
-                {
-                    OnUploadError(this, new ArgumentException($"Exception: {ex.Message}", "UploadFile"));
-                }
-            }            
-        }
-
-        #region object CRUD
-        /// <summary>
-        /// Add a image
-        /// </summary>
-        /// <param name="image"></param>
-        public void Add(FileUploadContent image)
-        {
-            try
-            {
-                if (image.Size < this.MaxAllowedSize)
-                {
-                    if (this.MaxAllowedFiles == 1)          //if only allowed 1 file always reset the dictionary
-                        UploadedFiles = new SortedDictionary<int, FileUploadContent>();
-
-                    int index = UploadedFiles.Count;
-
-                    if (index < this.MaxAllowedFiles)
-                    {
-                        //last image added is the default image to send
-                        UploadedImage = image.FileStreamContent;
-                        FileName = image.Name;
-
-                        UploadedFiles.Add(index, image);
-                        if (OnUploadFile is not null)
-                        {
-                            OnUploadFile(this, new FileUploadEventArgs { File = image, FileIndex = index, Action = "Added" });
-                        }
-                    }
-                    else
-                    {
-                        if (OnUploadError is not null)
-                        {
-                            OnUploadError(this, new ArgumentException($"Max files is {this.MaxAllowedFiles}", "Add"));
-                        }
-                    }
-                }
-                else
-                {
-                    if (OnUploadError is not null)
-                    {
-                        OnUploadError(this, new ArgumentException($"File {image.Name} overload {this.MaxAllowedSize}", "Add"));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                if (OnUploadError is not null)
-                {
-                    OnUploadError(this, new ArgumentException($"Exception: {ex.Message}", "Add"));
-                }
-            }
-            
-        }
-
-        /// <summary>
-        /// Update image by index
-        /// </summary>
-        /// <param name="image"></param>
-        public void Update(int index, FileUploadContent image)
-        {
-            if (OnUploadFile is not null)
-            {
-                OnUploadFile(this, new FileUploadEventArgs { File = this[index], FileIndex = index, Action = "Updating" });
-            }
-            UploadedFiles[index] = image;
-            if (OnUploadFile is not null)
-            {
-                OnUploadFile(this, new FileUploadEventArgs { File = image, FileIndex = index, Action = "Updated" });
-            }
-        }
-
-        /// <summary>
-        /// Update image by file name
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="image"></param>
-        public bool Update(string fileName, FileUploadContent image)
-        {
-            bool result;
-            try
-            {
-                var file = UploadedFiles.First(i => i.Value.Name == fileName);
-                if (file.Value is null)
-                {
-                    if (OnUploadError is not null)
-                    {
-                        OnUploadError(this, new ArgumentException($"Image {fileName} not found", "UpdateImage"));
-                    }
-                    result = false;
-                }
-                else
-                {
-                    Update(file.Key, image);
-                    result = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                result = false;
-                if (OnUploadError is not null)
-                {
-                    OnUploadError(this, new ArgumentException($"Exception: {ex.Message}", "Update"));
-                }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Remove image from index
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public bool Remove(int index)
-        {
-            FileUploadContent selection = UploadedFiles[index];
-            bool result = UploadedFiles.Remove(index);
-            if (result)
-            {
-                if (OnUploadFile is not null)
-                {
-                    OnUploadFile(this, new FileUploadEventArgs { File = selection, FileIndex = index, Action = "Removed" });
-                }
-            }
-            else
-            {
-                if (OnUploadFile is not null)
-                {
-                    OnUploadFile(this, new FileUploadEventArgs { File = selection, FileIndex = index, Action = "Remove failed" });
-                }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Remove image from file name
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public bool Remove(string fileName)
-        {
-            bool result;
-            try
-            {
-                var file = UploadedFiles.First(i => i.Value.Name == fileName);
-                if (file.Value is null)
-                {
-                    if (OnUploadError is not null)
-                    {
-                        OnUploadError(this, new ArgumentException($"Image {fileName} not found", "RemoveImage"));
-                    }
-                    result = false;
-                }
-                else
-                {
-                    result = Remove(file.Key);
-                }
-            }
-            catch (Exception ex)
-            {
-                result = false;
-                if (OnUploadError is not null)
-                {
-                    OnUploadError(this, new ArgumentException($"Exception: {ex.Message}", "Remove"));
-                }
-            }
-            return result;
-
-        }
-        #endregion
+        public override event APIErrorEventHandler OnAPIError;
         #endregion
 
         #region methods for api calls
@@ -411,15 +73,6 @@ namespace ClassLibrary.Handlers
         }
 
         /// <summary>
-        /// Set HttpClient if is not from the constructor
-        /// </summary>
-        /// <param name="httpClient"></param>
-        public void SetHttpClient(HttpClient httpClient)
-        {
-            HttpClient = httpClient;
-        }
-
-        /// <summary>
         /// Set IJSRuntime if it's not from the constructor
         /// </summary>
         /// <param name="jSRuntime"></param>
@@ -429,208 +82,18 @@ namespace ClassLibrary.Handlers
         }
         #endregion
 
-        #region api calls
-        /// <summary>
-        /// Upload a image using the endpoint send
-        /// </summary>
-        /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="urlEndPoint"></param>
-        /// <param name="field">form content name to upload the file</param>
-        /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, string field = "files")
-        {
-            if (UploadedImage is not null)
-            {
-                using MultipartFormDataContent content = new MultipartFormDataContent();
-                content.Add(
-                    content: UploadedImage,
-                    name: field,
-                    fileName: FileName
-                );
-                return await UploadFilesAsync<TModel>(urlEndPoint, content, true, field);
-            }
-            else
-            {
-                if (OnUploadError is not null)
-                {
-                    OnUploadError(this, new ArgumentException($"No files to upload", "UploadImageAsync"));
-                }
-                return default(TModel);
-            }
-        }
-
-        /// <summary>
-        /// Upload a image using the endpoint send
-        /// </summary>
-        /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="urlEndPoint"></param>
-        /// <param name="field">form content name to upload the file</param>
-        /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, InputFileChangeEventArgs files, string field = "files") =>
-            await UploadAsync<TModel>(urlEndPoint, new MultipartFormDataContent(), files, field);
-
-        /// <summary>
-        /// Upload a image using the endpoint send
-        /// </summary>
-        /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="urlEndPoint"></param>
-        /// <param name="content">form content to send to the url end point</param>
-        /// <param name="field">form content name to upload the file</param>
-        /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, string field = "files")
-        {
-            if (UploadedImage is not null)
-            {
-                content.Add(
-                    content: UploadedImage,
-                    name: field,
-                    fileName: FileName
-                );
-            }
-            return await UploadFilesAsync<TModel>(urlEndPoint, content, true, field);            
-        }
-
-        /// <summary>
-        /// Upload a image using the endpoint send
-        /// </summary>
-        /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="urlEndPoint"></param>
-        /// <param name="content">form content to send to the url end point</param>
-        /// <param name="files"></param>
-        /// <param name="field">form content name to upload the file</param>
-        /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, InputFileChangeEventArgs files, string field = "files")
-        {
-            UploadFile(files);
-            return await UploadFilesAsync<TModel>(urlEndPoint, content, false, field);
-        }
-
-        /// <summary>
-        /// Upload a image using the endpoint send
-        /// </summary>
-        /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
-        /// <param name="urlEndPoint"></param>
-        /// <param name="content">form content to send to the url end point</param>
-        /// <param name="file"></param>
-        /// <param name="fileName"></param>
-        /// <param name="field">form content name to upload the file</param>
-        /// <returns></returns>
-        public async Task<TModel> UploadAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,  StreamContent file, string fileName = "", string field = "files")
-        {
-            if (file is not null)
-            {
-                content.Add(
-                    content: file,
-                    name: field,
-                    fileName: string.IsNullOrEmpty(fileName) ? FileName : fileName
-                );
-            }
-            else
-            {
-                if (OnUploadError is not null)
-                {
-                    OnUploadError(this, new ArgumentException($"No files to upload", "UploadImageAsync"));
-                }
-            }
-            return await UploadFilesAsync<TModel>(urlEndPoint, content, true, field);
-        }
-
-        /// <summary>
-        /// Upload all files uploaded
-        /// </summary>
-        /// <typeparam name="TModel"></typeparam>
-        /// <param name="urlEndPoint"></param>
-        /// <param name="content"></param>
-        /// <param name="field"></param>
-        /// <param name="field">form content name to upload the file</param>
-        /// <returns></returns>
-        private async Task<TModel> UploadFilesAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
-            bool ignoreFiles, string field = "files")
-        {
-            if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
-            if (!ignoreFiles)
-            {
-                int c = UploadedFiles.Count;
-                long size = 0;
-                for (int i = 0; i < c; i++)
-                {
-                    content.Add(
-                        content: UploadedFiles[i].FileStreamContent,
-                        name: field,
-                        fileName: UploadedFiles[i].Name
-                    );
-                    size += UploadedFiles[i].Size;
-                }
-                if (OnUploaded is not null)
-                {
-                    OnUploaded(this, new FilesUploadEventArgs { Count = c, Files = UploadedFiles, Size = size });
-                }
-            }
-
-            using HttpResponseMessage result = await HttpClient.PostAsync(urlEndPoint, content);
-            TModel response = await result.Content.ReadFromJsonAsync<TModel>();
-            return response;
-        }
-
-        /// <summary>
-        /// Delete the image
-        /// </summary>
-        /// <param name="endPoint">Must be return boolean the endpoint</param>
-        /// <param name="index"></param>
-        /// <param name="field">form content name to upload the file</param>
-        /// <returns></returns>
-        public async Task<bool> DeleteAsync(string endPoint, int index, string field) =>
-            await DeleteAsync(endPoint, this[index].Name, field);
-
-        /// <summary>
-        /// Delete the image from the filename
-        /// </summary>
-        /// <param name="endPoint">Must be return boolean the endpoint</param>
-        /// <param name="filename"></param>
-        /// <param name="field">form content name to upload the file</param>
-        /// <returns></returns>
-        public async Task<bool> DeleteAsync(string endPoint, string filename, string field)
-        {
-            if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
-            if (string.IsNullOrEmpty(filename)) return false;
-
-            using MultipartFormDataContent content = new MultipartFormDataContent();
-            content.Add(new StringContent(filename), field);
-
-            using HttpResponseMessage response = await HttpClient.PostAsync(endPoint, content);
-            return await response.Content.ReadFromJsonAsync<bool>();
-        }
-        #endregion
-
         #region api call with auth
         /// <summary>
         /// Upload a image using the endpoint send
         /// </summary>
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
         /// <param name="urlEndPoint"></param>
+        /// <param name="ignoreFiles">Indicate if need to ignore the files or not</param>
         /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
-        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, string field = "files")
-        {
-            if (UploadedImage is not null)
-            {
-                using MultipartFormDataContent content = new MultipartFormDataContent();
-                content.Add(
-                    content: UploadedImage,
-                    name: field,
-                    fileName: FileName
-                );
-                return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, true, field);
-            }
-            else
-            {
-                if (OnUploadError is not null)
-                {
-                    OnUploadError(this, new ArgumentException($"No files to upload", "UploadImageAsync"));
-                }
-                return default(TModel);
-            }
-        }
+        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, bool ignoreFiles = true, string field = "files") =>
+            await UploadAuthAsync<TModel>(urlEndPoint, new MultipartFormDataContent(), true);
+
 
         /// <summary>
         /// Upload a image using the endpoint send
@@ -649,19 +112,32 @@ namespace ClassLibrary.Handlers
         /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
         /// <param name="urlEndPoint"></param>
         /// <param name="content">form content to send to the url end point</param>
-        /// <param name="field">form content name to upload the file</param>
         /// <returns></returns>
-        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, string field = "files")
+        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content) =>
+            await UploadAuthAsync<TModel>(urlEndPoint, content, true);
+
+        /// <summary>
+        /// Upload a image using the endpoint send
+        /// </summary>
+        /// <typeparam name="TModel">Model to use on the response from the url end point</typeparam>
+        /// <param name="urlEndPoint"></param>
+        /// <param name="content">form content to send to the url end point</param>
+        /// <param name="ignoreFiles">Indicate if need to ignore the files or not</param>
+        /// <returns></returns>
+        public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, bool ignoreFiles, string field = "files")
         {
-            if (UploadedImage is not null)
+            if (ignoreFiles)
             {
-                content.Add(
-                    content: UploadedImage,
-                    name: field,
-                    fileName: FileName
-                );
+                if (UploadedImage is not null)
+                {
+                    content.Add(
+                        content: UploadedImage,
+                        name: field,
+                        fileName: FileName
+                    );
+                }
             }
-            return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, true, field);
+            return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, ignoreFiles);
         }
 
         /// <summary>
@@ -720,7 +196,7 @@ namespace ClassLibrary.Handlers
         private async Task<TModel> UploadFilesAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
             bool ignoreFiles, string field = "files")
         {
-            if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
+            if (this.HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
             if (JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
             if (!ignoreFiles)
             {
@@ -769,7 +245,7 @@ namespace ClassLibrary.Handlers
             if (JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
             if (string.IsNullOrEmpty(filename)) return false;
 
-            using MultipartFormDataContent content = new MultipartFormDataContent();
+            MultipartFormDataContent content = new MultipartFormDataContent();
             content.Add(new StringContent(filename), field);
 
             using HttpResponseMessage response = await HttpClient.PostAuthAsync(JSRuntime, endPoint, content);
@@ -805,75 +281,6 @@ namespace ClassLibrary.Handlers
             GC.SuppressFinalize(this);
         }
         #endregion
-    }
-
-    /// <summary>
-    /// Return file name and file stream per each file uploaded
-    /// </summary>
-    public class FileUploadEventArgs : EventArgs
-    {
-        /// <summary>
-        /// File uploaded with all the data
-        /// </summary>
-        public FileUploadContent File { get; set; }
-        /// <summary>
-        /// Index in the object
-        /// </summary>
-        public int FileIndex { get; set; }
-        /// <summary>
-        /// Action used
-        /// </summary>
-        public string Action { get; set; }
-    }
-
-    /// <summary>
-    /// Return all files uploaded
-    /// </summary>
-    public class FilesUploadEventArgs : EventArgs
-    {
-        /// <summary>
-        /// Files uploaded
-        /// </summary>
-        public SortedDictionary<int, FileUploadContent> Files { get; set; }
-        /// <summary>
-        /// Total size of all the files uploated
-        /// </summary>
-        public long Size { get; set; }
-        /// <summary>
-        /// Number of the files uploated
-        /// </summary>
-        public int Count { get; set; }
-        /// <summary>
-        /// Action used
-        /// </summary>
-        public string Action { get; set; }
-    }
-
-    /// <summary>
-    /// Manage the file upload
-    /// </summary>
-    public class FileUploadContent
-    {
-        /// <summary>
-        /// The name of the file as specified by the browser.
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// The last modified date as specified by the browser.
-        /// </summary>
-        public DateTimeOffset LastModified { get; set; }
-        /// <summary>
-        /// The size of the file in bytes as specified by the browser.
-        /// </summary>
-        public long Size { get; set; }
-        /// <summary>
-        /// The MIME type of the file as specified by the browser.
-        /// </summary>
-        public string ContentType { get; set; }
-        /// <summary>
-        /// File bites
-        /// </summary>
-        public StreamContent FileStreamContent { get; set; }
     }
 
 }
