@@ -38,29 +38,6 @@ namespace ClassLibrary.Handlers
         }
         #endregion
 
-
-        #region events
-        /// <summary>
-        /// Event to notify each file uploaded
-        /// </summary>
-        public override event UploadEventHandler OnUploadFile;
-
-        /// <summary>
-        /// Event to notify all files are uploaded
-        /// </summary>
-        public override event UploadsEventHandler OnUploaded;
-
-        /// <summary>
-        /// Event to notify errors occurs
-        /// </summary>
-        public override event UploadErrorEventHandler OnUploadError;
-
-        /// <summary>
-        /// Event to notify errors occurs uploading to the api
-        /// </summary>
-        public override event APIErrorEventHandler OnAPIError;
-        #endregion
-
         #region methods for api calls
         /// <summary>
         /// Get IDefaultServices to set HttpClient and JSRuntime
@@ -177,10 +154,7 @@ namespace ClassLibrary.Handlers
             }
             else
             {
-                if (OnUploadError is not null)
-                {
-                    OnUploadError(this, new ArgumentException($"No files to upload", "UploadImageAsync"));
-                }
+                OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadImageAsync"));            
             }
             return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, ignoreFiles, field);
         }
@@ -211,10 +185,7 @@ namespace ClassLibrary.Handlers
                     );
                     size += UploadedFiles[i].Size;
                 }
-                if (OnUploaded is not null)
-                {
-                    OnUploaded(this, new FilesUploadEventArgs { Count = c, Files = UploadedFiles, Size = size });
-                }
+                OnUploadedEvent(this, new FilesUploadEventArgs { Count = c, Files = UploadedFiles, Size = size });              
             }
 
             using HttpResponseMessage result = await HttpClient.PostAuthAsync(JSRuntime, urlEndPoint, content);
