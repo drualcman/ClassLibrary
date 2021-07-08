@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorInputFileExtended" Version="1.0.2" />
+    <PackageReference Include="BlazorInputFileExtended" Version="1.0.3" />
     <PackageReference Include="DrUalcman-Cipher" Version="1.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
