@@ -2,6 +2,21 @@
 (function () {
     window.$p = {
         /**
+         * Load a javascript file in any time you need to load into the apge
+         * @param {any} name name to identify the script
+         * @param {any} scriptFile url with the javascript file
+         */
+        LoadJavascript: (name, scriptFile) => {
+            let tag = document.getElementById(name);
+            if (!tag) {
+                tag = document.createElement('script');
+                tag.id = name
+                tag.src = scriptFile;
+                var firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        },
+        /**
          * Know when the page is full charge and can use all DOM objects
          * @param {any} CallBack function to execute when the page is full charge
          */
