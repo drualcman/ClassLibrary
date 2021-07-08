@@ -227,7 +227,7 @@ namespace ClassLibrary.Handlers
         #region dispose
         private bool disposedValue;
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
@@ -240,16 +240,9 @@ namespace ClassLibrary.Handlers
                         UploadedFiles[i]?.FileStreamContent?.Dispose();
                     }
                 }
-
                 disposedValue = true;
+                base.Dispose(disposing);
             }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
         #endregion
     }
