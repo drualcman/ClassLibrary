@@ -1,4 +1,5 @@
 ﻿using BlazorInputFileExtended;
+using BlazorInputFileExtended.Helpers;
 using ClassLibrary.Extensions;
 using ClassLibrary.Service;
 using Microsoft.AspNetCore.Components.Forms;
@@ -59,7 +60,164 @@ namespace ClassLibrary.Handlers
         }
         #endregion
 
+
         #region api call with auth
+        /// <summary>
+        /// Upload a image using the endpoint send
+        /// </summary>
+        /// <param name="urlEndPoint"></param>
+        /// <param name="ignoreFiles">Indicate if need to ignore the files or not</param>
+        /// <param name="field">form content name to upload the file</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> UploadAuthAsync(string urlEndPoint, bool ignoreFiles = true, string field = "files") =>
+            await UploadAuthAsync(urlEndPoint, new MultipartFormDataContent(), true);
+
+
+        /// <summary>
+        /// Upload a image using the endpoint send
+        /// </summary>
+        /// <param name="urlEndPoint"></param>
+        /// <param name="files"></param>
+        /// <param name="field">form content name to upload the file</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> UploadAuthAsync(string urlEndPoint, InputFileChangeEventArgs files, string field = "files") =>
+            await UploadAuthAsync(urlEndPoint, new MultipartFormDataContent(), files, field);
+
+        /// <summary>
+        /// Upload a image using the endpoint send
+        /// </summary>
+        /// <param name="urlEndPoint"></param>
+        /// <param name="content">form content to send to the url end point</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> UploadAuthAsync(string urlEndPoint, MultipartFormDataContent content) =>
+            await UploadAuthAsync(urlEndPoint, content, true);
+
+        /// <summary>
+        /// Upload a image using the endpoint send
+        /// </summary>
+        /// <param name="urlEndPoint"></param>
+        /// <param name="content">form content to send to the url end point</param>
+        /// <param name="ignoreFiles">Indicate if need to ignore the files or not</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> UploadAuthAsync(string urlEndPoint, MultipartFormDataContent content, bool ignoreFiles, string field = "files")
+        {
+            if (ignoreFiles)
+            {
+                if (UploadedImage is not null)
+                {
+                    content.Add(
+                        content: UploadedImage,
+                        name: field,
+                        fileName: FileName
+                    );
+                }
+            }
+            return await UploadFilesAuthAsync(urlEndPoint, content, ignoreFiles);
+        }
+
+        /// <summary>
+        /// Upload a image using the endpoint send
+        /// </summary>
+        /// <param name="urlEndPoint"></param>
+        /// <param name="content">form content to send to the url end point</param>
+        /// <param name="files"></param>
+        /// <param name="field">form content name to upload the file</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> UploadAuthAsync(string urlEndPoint, MultipartFormDataContent content, InputFileChangeEventArgs files, string field = "files")
+        {
+            UploadFile(files);
+            return await UploadFilesAuthAsync(urlEndPoint, content, false, field);
+        }
+
+        /// <summary>
+        /// Upload a image using the endpoint send
+        /// </summary>
+        /// <param name="urlEndPoint"></param>
+        /// <param name="content">form content to send to the url end point</param>
+        /// <param name="file"></param>
+        /// <param name="fileName"></param>
+        /// <param name="field">form content name to upload the file</param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> UploadAuthAsync(string urlEndPoint, MultipartFormDataContent content, StreamContent file, string fileName = "", string field = "files", bool ignoreFiles = true)
+        {
+            if (file is not null)
+            {
+                content.Add(
+                    content: file,
+                    name: field,
+                    fileName: string.IsNullOrEmpty(fileName) ? FileName : fileName
+                );
+            }
+            else
+            {
+                OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadImageAsync"));
+            }
+            return await UploadFilesAuthAsync(urlEndPoint, content, ignoreFiles, field);
+        }
+
+        /// <summary>
+        /// Upload all files uploaded
+        /// </summary>
+        /// <param name="urlEndPoint"></param>
+        /// <param name="content"></param>
+        /// <param name="field">form content name to upload the file</param>
+        /// <returns></returns>
+        private async Task<HttpResponseMessage> UploadFilesAuthAsync(string urlEndPoint, MultipartFormDataContent content,
+            bool ignoreFiles, string field = "files")
+        {
+            if (this.HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
+            if (JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
+            if (!ignoreFiles)
+            {
+                int c = UploadedFiles.Count;
+                long size = 0;
+                for (int i = 0; i < c; i++)
+                {
+                    content.Add(
+                        content: UploadedFiles[i].FileStreamContent,
+                        name: field,
+                        fileName: UploadedFiles[i].Name
+                    );
+                    size += UploadedFiles[i].Size;
+                }
+                OnUploadedEvent(this, new FilesUploadEventArgs { Count = c, Files = UploadedFiles, Size = size });
+            }
+
+            HttpResponseMessage response;
+            try
+            {
+                if (this.Size > 0)
+                {
+                    response = await HttpClient.PostAuthAsync(JSRuntime, urlEndPoint, content);
+                }
+                else
+                {
+                    OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadFilesAsync"));
+                    response = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                OnAPIErrorEvent(this, new ArgumentException($"{urlEndPoint}: Exception: {ex.Message}", "UploadFilesAsync", ex));
+                response = null;
+            }
+            return response;
+        }
+        #endregion
+
+        #region api call with auth
+        /// <summary>
+        /// Upload image using the object with the data for the form content
+        /// </summary>
+        /// <typeparam name="TModel">Model to use on the response from the Target to post file</typeparam>
+        /// <typeparam name="TData">Model of the data to send with the form and the file</typeparam>
+        /// <param name="TargetToPostFile"></param>
+        /// <param name="data">Object with the data to send with the file</param>
+        /// <param name="ignoreFiles">Indicate if need to ignore the dictionary files or not. False upload the last image selected.</param>
+        /// <returns></returns>
+        public async Task<TModel> UploadAuthAsync<TModel, TData>(string TargetToPostFile, TData data, bool ignoreFiles = true) =>
+            await UploadAuthAsync<TModel>(TargetToPostFile, FormData.SetMultipartFormDataContent(data), ignoreFiles);
+
         /// <summary>
         /// Upload a image using the endpoint send
         /// </summary>
@@ -170,26 +328,32 @@ namespace ClassLibrary.Handlers
         private async Task<TModel> UploadFilesAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content,
             bool ignoreFiles, string field = "files")
         {
-            if (this.HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
-            if (JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
-            if (!ignoreFiles)
+            TModel response;
+            try
             {
-                int c = UploadedFiles.Count;
-                long size = 0;
-                for (int i = 0; i < c; i++)
+                if (this.Count > 0)
                 {
-                    content.Add(
-                        content: UploadedFiles[i].FileStreamContent,
-                        name: field,
-                        fileName: UploadedFiles[i].Name
-                    );
-                    size += UploadedFiles[i].Size;
+                    using HttpResponseMessage result = await UploadFilesAuthAsync(urlEndPoint, content, ignoreFiles);
+                    if (result.IsSuccessStatusCode) response = await result.Content.ReadFromJsonAsync<TModel>();
+                    else
+                    {
+                        //decode the error from the call of the end point                        
+                        string jsonElement = await result.Content.ReadAsStringAsync();
+                        OnAPIErrorEvent(this, new ArgumentException($"{urlEndPoint}: {result.ReasonPhrase} [{(int)result.StatusCode} {result.StatusCode}]: {jsonElement}", "UploadFilesAsync"));
+                        response = default(TModel);
+                    }
                 }
-                OnUploadedEvent(this, new FilesUploadEventArgs { Count = c, Files = UploadedFiles, Size = size });              
+                else
+                {
+                    OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadFilesAsync"));
+                    response = default(TModel);
+                }
             }
-
-            using HttpResponseMessage result = await HttpClient.PostAuthAsync(JSRuntime, urlEndPoint, content);
-            TModel response = await result.Content.ReadFromJsonAsync<TModel>();
+            catch (Exception ex)
+            {
+                OnAPIErrorEvent(this, new ArgumentException($"{urlEndPoint}: Exception: {ex.Message}", "UploadFilesAsync", ex));
+                response = default(TModel);
+            }
             return response;
         }
 
