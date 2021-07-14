@@ -331,21 +331,17 @@ namespace ClassLibrary.Handlers
             TModel response;
             try
             {
-                if (this.Count > 0)
-                {
-                    using HttpResponseMessage result = await UploadFilesAuthAsync(urlEndPoint, content, ignoreFiles);
-                    if (result.IsSuccessStatusCode) response = await result.Content.ReadFromJsonAsync<TModel>();
-                    else
-                    {
-                        //decode the error from the call of the end point                        
-                        string jsonElement = await result.Content.ReadAsStringAsync();
-                        OnAPIErrorEvent(this, new ArgumentException($"{urlEndPoint}: {result.ReasonPhrase} [{(int)result.StatusCode} {result.StatusCode}]: {jsonElement}", "UploadFilesAsync"));
-                        response = default(TModel);
-                    }
-                }
-                else
+                if (this.Count < 1)
                 {
                     OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadFilesAsync"));
+                }
+                using HttpResponseMessage result = await UploadFilesAuthAsync(urlEndPoint, content, ignoreFiles);
+                if (result.IsSuccessStatusCode) response = await result.Content.ReadFromJsonAsync<TModel>();
+                else
+                {
+                    //decode the error from the call of the end point                        
+                    string jsonElement = await result.Content.ReadAsStringAsync();
+                    OnAPIErrorEvent(this, new ArgumentException($"{urlEndPoint}: {result.ReasonPhrase} [{(int)result.StatusCode} {result.StatusCode}]: {jsonElement}", "UploadFilesAsync"));
                     response = default(TModel);
                 }
             }
