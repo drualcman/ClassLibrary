@@ -1,0 +1,11 @@
+﻿
+<div class="cst-form border-grey mw-3">
+    <div class="field">
+        <div class="control">
+            <input type="text" class="input" placeholder="Search ..." 
+                   @bind-value="SearchText" 
+                   @onkeyup="FilterTable" 
+                   @bind-value:event="oninput" />
+        </div>
+    </div>
+</div>
