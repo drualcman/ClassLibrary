@@ -24,9 +24,9 @@ namespace ClassLibrary.Javascript
         /// <param name="target">selector where show the message</param>
         /// <param name="message">message to show</param>
         /// <returns></returns>
-        public static async ValueTask BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+        public static void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string message) =>
-            await BulmaMessageAsync(jsRuntume, type, target, message);
+            BulmaMessageAsync(jsRuntume, type, target, message);
 
         /// <summary>
         /// Show Bulma Message
@@ -36,9 +36,9 @@ namespace ClassLibrary.Javascript
         /// <param name="title">title for the message</param>
         /// <param name="message">message to show</param>
         /// <returns></returns>
-        public static async ValueTask BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+        public static void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string title, string message) =>
-            await BulmaMessageAsync(jsRuntume, type, target, title, message, 0);
+            BulmaMessageAsync(jsRuntume, type, target, title, message, 0);
 
         /// <summary>
         /// Show Bulma Message
@@ -49,7 +49,7 @@ namespace ClassLibrary.Javascript
         /// <param name="message">message to show</param>
         /// <param name="timeout">timeout to out hide. 0 never hide</param>
         /// <returns></returns>
-        public static async ValueTask BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type, 
+        public static async void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type, 
             string target, string title, string message, int timeout) 
         {
             switch (type)
@@ -121,9 +121,9 @@ namespace ClassLibrary.Javascript
         /// <param name="target">selector where show the message</param>
         /// <param name="message">message to show</param>
         /// <returns></returns>
-        public static async ValueTask BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+        public static void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string message)=>
-            await BootstrapMessageAsync(jsRuntume, type, target, message);
+            BootstrapMessageAsync(jsRuntume, type, target, message);
 
         /// <summary>
         /// Show Bootstrap Message
@@ -133,9 +133,9 @@ namespace ClassLibrary.Javascript
         /// <param name="title">title for the message</param>
         /// <param name="message">message to show</param>
         /// <returns></returns>
-        public static async ValueTask BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+        public static  void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string title, string message) =>
-            await BootstrapMessageAsync(jsRuntume, type, target, title, message, 0);
+            BootstrapMessageAsync(jsRuntume, type, target, title, message, 0);
 
         /// <summary>
         /// Show Bootstrap Message
@@ -146,7 +146,7 @@ namespace ClassLibrary.Javascript
         /// <param name="message">message to show</param>
         /// <param name="timeout">timeout to out hide. 0 never hide</param>
         /// <returns></returns>
-        public static async ValueTask BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+        public static async void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string title, string message, int timeout)
         {
             switch (type)
@@ -181,8 +181,8 @@ namespace ClassLibrary.Javascript
         /// <param name="title">title</param>
         /// <param name="message">notification content</param>
         /// <returns></returns>
-        public static async ValueTask CustomMessageAsync(this IJSRuntime jsRuntime, BoxType type, string target, string title, string message) =>
-               await CustomMessageAsync(jsRuntime, type, target, title, message, 0, string.Empty);
+        public static void CustomMessageAsync(this IJSRuntime jsRuntime, BoxType type, string target, string title, string message) =>
+               CustomMessageAsync(jsRuntime, type, target, title, message, 0, string.Empty);
 
         /// <summary>
         /// Show Custom Message on the page
@@ -191,8 +191,8 @@ namespace ClassLibrary.Javascript
         /// <param name="title">title</param>
         /// <param name="message">notification content</param>
         /// <returns></returns>
-        public static async ValueTask CustomMessageAsync(this IJSRuntime jsRuntime, string target, string title, string message) =>
-               await CustomMessageAsync(jsRuntime, BoxType.Default, target, title, message, 0, string.Empty);
+        public static void CustomMessageAsync(this IJSRuntime jsRuntime, string target, string title, string message) =>
+               CustomMessageAsync(jsRuntime, BoxType.Default, target, title, message, 0, string.Empty);
 
         /// <summary>
         /// Show Custom Message on the page
@@ -200,8 +200,8 @@ namespace ClassLibrary.Javascript
         /// <param name="target">parent element to eppend</param>
         /// <param name="message">notification content</param>
         /// <returns></returns>
-        public static async ValueTask CustomMessageAsync(this IJSRuntime jsRuntime, string target, string message) =>
-               await CustomMessageAsync(jsRuntime, BoxType.Default, target, string.Empty, message, 0, string.Empty);
+        public static void CustomMessageAsync(this IJSRuntime jsRuntime, string target, string message) =>
+               CustomMessageAsync(jsRuntime, BoxType.Default, target, string.Empty, message, 0, string.Empty);
 
         /// <summary>
         /// Show Custom Message on the page
@@ -211,11 +211,11 @@ namespace ClassLibrary.Javascript
         /// <param name="target">parent element to eppend</param>
         /// <param name="title">title</param>
         /// <param name="message">notification content</param>
-        /// <param name="timeout">notification remove time</param>
+        /// <param name="timeout">notification remove time in seconds</param>
         /// <param name="classes">optional, additional classes</param>
         /// <returns></returns>
-        public static async ValueTask CustomMessageAsync(this IJSRuntime jsRuntume, BoxType type,
-            string target, string title, string message, int timeout, string classes)
+        public static async void CustomMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+            string target, string title, string message, int timeout, string classes = "")
         {
             switch (type)
             {
@@ -250,9 +250,9 @@ namespace ClassLibrary.Javascript
         /// <param name="message">message content</param>
         /// <param name="status">popup status ex. success, danger</param>
         /// <returns></returns>
-        public static async ValueTask PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status)
+        public static void PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status)
         {
-            await PopupResponseAsync(jsRuntume, message, status, null, null);
+             PopupResponseAsync(jsRuntume, message, status, null, null);
         }
 
         /// <summary>
@@ -263,9 +263,9 @@ namespace ClassLibrary.Javascript
         /// <param name="status">popup status ex. success, danger</param>
         /// <param name="time">time limit on showing the popup</param>
         /// <returns></returns>
-        public static async ValueTask PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int time)
+        public static void PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int time)
         {
-            await PopupResponseAsync(jsRuntume, message, status, time, null);
+            PopupResponseAsync(jsRuntume, message, status, time, null);
         }
 
         /// <summary>
@@ -277,7 +277,7 @@ namespace ClassLibrary.Javascript
         /// <param name="time">time limit on showing the popup</param>
         /// <param name="additional">additional popup design</param>
         /// <returns></returns>
-        public static async ValueTask PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int? time, string additional)
+        public static async void PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int? time, string additional)
         {
             await jsRuntume.InvokeVoidAsync("PopupResponse", message, status, time, additional);
         }

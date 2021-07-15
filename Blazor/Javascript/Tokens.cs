@@ -40,8 +40,11 @@ namespace ClassLibrary.Javascript
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static async Task SetUserTokenAsync(this IJSRuntime jsRuntime, string token)
-            => await jsRuntime.LocalStorageSetAsync("token", token);
+        public static Task SetUserTokenAsync(this IJSRuntime jsRuntime, string token)
+        {
+            jsRuntime.LocalStorageSetAsync("token", token);
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         /// Set the claims about the active user and return the user model
@@ -49,8 +52,11 @@ namespace ClassLibrary.Javascript
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static async Task SetUserDataAsync(this IJSRuntime jsRuntime, string data)
-            => await jsRuntime.LocalStorageSetAsync("blazor", data);
+        public static Task SetUserDataAsync(this IJSRuntime jsRuntime, string data)
+        {
+            jsRuntime.LocalStorageSetAsync("blazor", data);
+            return Task.CompletedTask;
+        }
 
 
         /// <summary>
@@ -59,10 +65,11 @@ namespace ClassLibrary.Javascript
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static async Task SetAllDataAsync(this IJSRuntime jsRuntime, string data, string token)
+        public static Task SetAllDataAsync(this IJSRuntime jsRuntime, string data, string token)
         {
-            await jsRuntime.LocalStorageSetAsync("blazor", data);
-            await jsRuntime.LocalStorageSetAsync("token", token);
+            jsRuntime.LocalStorageSetAsync("blazor", data);
+            jsRuntime.LocalStorageSetAsync("token", token);
+            return Task.CompletedTask;
         }
         #endregion
 
@@ -74,8 +81,12 @@ namespace ClassLibrary.Javascript
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static async Task DelUserTokenAsync(this IJSRuntime jsRuntime)
-            => await jsRuntime.LocalStorageDelAsync("token");
+        public static Task DelUserTokenAsync(this IJSRuntime jsRuntime)
+        { 
+            jsRuntime.LocalStorageDelAsync("token");
+            return Task.CompletedTask;
+        }
+
 
         /// <summary>
         /// Delete claims about the active user and return the user model
@@ -83,19 +94,23 @@ namespace ClassLibrary.Javascript
         /// </summary>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static async Task DelUserDataAsync(this IJSRuntime jsRuntime)
-            => await jsRuntime.LocalStorageDelAsync("blazor");
-
-        /// <summary>
-        /// Delete claims about the active user and return the user model
-        /// Authentication using jwt authentication
-        /// </summary>
-        /// <param name="jsRuntime"></param>
-        /// <returns></returns>
-        public static async Task DelAllDataAsync(this IJSRuntime jsRuntime)
+        public static Task DelUserDataAsync(this IJSRuntime jsRuntime)
         {
-            await jsRuntime.LocalStorageDelAsync("blazor");
-            await jsRuntime.LocalStorageDelAsync("token");
+            jsRuntime.LocalStorageDelAsync("blazor");
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Delete claims about the active user and return the user model
+        /// Authentication using jwt authentication
+        /// </summary>
+        /// <param name="jsRuntime"></param>
+        /// <returns></returns>
+        public static Task DelAllDataAsync(this IJSRuntime jsRuntime)
+        {
+            jsRuntime.LocalStorageDelAsync("blazor");
+            jsRuntime.LocalStorageDelAsync("token");
+            return Task.CompletedTask;
         }
 
         #endregion
