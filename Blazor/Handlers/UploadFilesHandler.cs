@@ -186,15 +186,11 @@ namespace ClassLibrary.Handlers
             HttpResponseMessage response;
             try
             {
-                if (this.Size > 0)
-                {
-                    response = await HttpClient.PostAuthAsync(JSRuntime, urlEndPoint, content);
-                }
-                else
+                if (this.Count < 1)
                 {
                     OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadFilesAsync"));
-                    response = null;
                 }
+                response = await HttpClient.PostAuthAsync(JSRuntime, urlEndPoint, content);
             }
             catch (Exception ex)
             {
