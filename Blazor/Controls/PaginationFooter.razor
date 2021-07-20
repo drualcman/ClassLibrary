@@ -1,0 +1,39 @@
+﻿<div class="@ContainerCss">
+    <ul>
+        @{
+            string active = 1 == CurrentPage ? "active" : "";
+            int i;
+            if (CurrentPage > 5)
+            {
+                i = CurrentPage - 5;
+            }
+            else
+            {
+                i = 1;
+            }
+            if (CurrentPage > 6)
+            {
+                <li class="@ElementCss" @onclick="() => ToPage(1)">&lt;&lt;</li>
+                <li class="@ElementCss" @onclick="() => ToPage(CurrentPage - 1)">&lt;</li>
+            }
+            int c = 0;
+            do
+            {
+                if (i <= TotalPages)
+                {
+                    active = i == CurrentPage ? "active" : "";
+                    <li class="@ElementCss @active" @onclick="() => ToPage(i)">@i</li>
+                }
+                else c = 10;
+                i++;
+                c++;
+            } while (c < 10 && i <= TotalPages);
+            i--;
+            if (CurrentPage < TotalPages - 4)
+            {
+                <li class="@ElementCss" @onclick="() => ToPage(CurrentPage+1)">&gt;</li>
+                <li class="@ElementCss" @onclick="() => ToPage(TotalPages)">&gt;&gt;</li>
+            }
+        }
+    </ul>
+</div>
