@@ -1115,13 +1115,21 @@
             }
         },
         /**
+         * Set the HTML page can scroll yes or not
+         * @param {string} clipped true can't scroll, false can scroll
+         */
+        ClipPage: function (clipped) {
+            var rootEl = document.documentElement;
+            if (clipped) rootEl.classList.add('is-clipped');
+            else rootEl.classList.remove('is-clipped');
+        },
+        /**
          * Open modal using bulma
          * @param {string} elemId id about the popup window
          */
         ModalOn: function (elemId) {
-            var rootEl = document.documentElement;
+            $p.ClipPage(true);
             var $target = $p.GetById(elemId);
-            rootEl.classList.add('is-clipped');
             $target.classList.add('is-active');
         },
         /**
@@ -1129,9 +1137,8 @@
          * @param {string} elemId id about the popup window
          */
         ModalOff: function (elemId) {
-            let rootEl = document.documentElement;
-            let $el = this.GetById(elemId);
-            rootEl.classList.remove('is-clipped');
+            $p.ClipPage(false);
+            let $el = $p.GetById(elemId);
             $el.classList.remove('is-active');
         },
         /**
