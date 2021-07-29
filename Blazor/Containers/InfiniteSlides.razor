@@ -14,10 +14,10 @@ else if (Items.Any())
 </div>
 
     <div class="@ButtonsContainerCss ">
-        <div class="left-arrow" @onclick="MoveLeft">
+        <div class="@LeftContainerCss" @onclick="MoveLeft">
             @Left
         </div>
-        <div class="right-arrow" @onclick="MoveRight">
+        <div class="@RightContainerCss" @onclick="MoveRight">
             @Right
         </div>
     </div>
