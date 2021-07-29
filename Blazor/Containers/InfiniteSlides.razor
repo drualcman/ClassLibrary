@@ -1,0 +1,29 @@
+﻿@typeparam TItem
+
+@if (Items is null)
+{
+    @Loading
+}
+else if (Items.Any())
+{
+    foreach (Item item in ItemsList)
+    {
+        @Body(item.Element);
+    }
+
+    <div class="@ButtonsContainerCss ">
+        <div class="@LeftContainerCss" @onclick="MoveLeft">
+            @Left
+        </div>
+        <div class="@RightContainerCss" @onclick="MoveRight">
+            @Right
+        </div>
+    </div>
+}
+else
+{
+    @Empty
+}
+
+
+
