@@ -14,7 +14,7 @@ namespace ClassLibrary.Containers
         public RenderFragment Loading { get; set; }
 
         [Parameter]
-        public RenderFragment BodyContainer { get; set; }
+        public string BodyContainerCss { get; set; }
 
         [Parameter]
         public RenderFragment<TItem> Body { get; set; }

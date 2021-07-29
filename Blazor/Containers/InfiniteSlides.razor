@@ -6,16 +6,18 @@
 }
 else if (Items.Any())
 {
-    foreach (Item item in ItemsList)
+<div class="@BodyContainerCss">
+    @foreach (Item item in ItemsList)
     {
-        @Body(item.Element);
+    @Body(item.Element);
     }
+</div>
 
     <div class="@ButtonsContainerCss ">
-        <div class="@LeftContainerCss" @onclick="MoveLeft">
+        <div class="left-arrow" @onclick="MoveLeft">
             @Left
         </div>
-        <div class="@RightContainerCss" @onclick="MoveRight">
+        <div class="right-arrow" @onclick="MoveRight">
             @Right
         </div>
     </div>
