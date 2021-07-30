@@ -17,6 +17,10 @@ namespace ClassLibrary.Containers
         public string BodyContainerCss { get; set; }
 
         [Parameter]
+
+        public bool HideButtons { get; set; }
+
+        [Parameter]
         public RenderFragment<TItem> Body { get; set; }
         
         [Parameter]

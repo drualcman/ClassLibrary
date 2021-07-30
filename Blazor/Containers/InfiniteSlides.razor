@@ -12,7 +12,8 @@ else if (Items.Any())
     @Body(item.Element);
     }
 </div>
-
+    
+@if (!HideButtons) { 
     <div class="@ButtonsContainerCss ">
         <div class="@LeftContainerCss" @onclick="MoveLeft">
             @Left
@@ -21,6 +22,7 @@ else if (Items.Any())
             @Right
         </div>
     </div>
+}
 }
 else
 {
