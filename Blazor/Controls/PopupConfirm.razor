@@ -1,13 +1,26 @@
-﻿<div class="modal cp @(IsShow ? "is-active" : "")">
-    <div class="modal-background" @onclick="Close"></div>
-    <div class="modal-content mw-3-5">
-        <div class="box radius-20">
-            <p class="fc-6">Are you sure do you want to delete?</p>
+﻿@if (IsShow)
+{
+    <div class="modal cp @ActiveCss">
+        <div class="modal-background" @onclick="Close"></div>
+        <div class="modal-content mw-3-5">
+            <div class="box radius-20">
+                @if (ChildContent is null)
+                {
+                    <p class="fc-6">Are you sure do you want to do?</p>
+                }
+                else
+                {
+                    @ChildContent
+                }
 
-            <div class="cta-wp mt-20 text-right">
-                <button type="button" class="button fw-6 @(LoadingBtn == "popupsubmit" ? "cst-loading" : "")" @onclick="Continue" disabled="@(LoadingBtn == "popupsubmit")">Yes</button>
-                <button type="button" class="button cst-text" @onclick="Close">Cancel</button>
+                <div class="cta-wp mt-20 text-right">
+                    <button type="button" class="button fw-6 @LoadingBtn )"
+                            @onclick="Continue" disabled="@IsLoading">
+                        Yes
+                    </button>
+                    <button type="button" class="button cst-text" @onclick="Close">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
