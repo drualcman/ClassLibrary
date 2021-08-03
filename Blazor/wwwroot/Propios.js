@@ -1129,7 +1129,7 @@
          */
         ModalOn: function (elemId) {
             $p.ClipPage(true);
-            var $target = $p.GetById(elemId);
+            var $target = $p.Element(elemId);
             $target.classList.add('is-active');
         },
         /**
@@ -1138,7 +1138,7 @@
          */
         ModalOff: function (elemId) {
             $p.ClipPage(false);
-            let $el = $p.GetById(elemId);
+            let $el = $p.Element(elemId);
             $el.classList.remove('is-active');
         },
         /**
