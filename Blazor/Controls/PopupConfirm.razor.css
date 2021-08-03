@@ -1,4 +1,8 @@
-﻿.cst-loading {
+﻿.modal.confirm {
+    z-index: 90000;
+}
+
+.cst-loading {
     color: transparent !important;
     pointer-events: none;
     position: relative;
@@ -19,3 +23,5 @@
         height: 1em;
         width: 1em;
     }
+
+
