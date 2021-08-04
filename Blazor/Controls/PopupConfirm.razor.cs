@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Threading.Tasks;
 
 namespace ClassLibrary.Controls
 {
@@ -28,20 +27,13 @@ namespace ClassLibrary.Controls
 
         protected override void OnParametersSet()
         {
-            LoadingBtn = LoadingBtn ?? "";
             ActiveCss = ActiveCss ?? "is-active";
-            if (LoadingBtn == "popupsubmit")
-            {
-                IsLoading = true;
-            }
-            else
-            {
-                if (IsLoading) LoadingBtn = "cst-loading";
-            }
         }
 
         void Close() => ClosePopup.InvokeAsync();
 
         void Continue() => Agreed.InvokeAsync();
+
+        string IsLoadingBtn() => IsLoading || (LoadingBtn == "popupsubmit") ? "cst-loading" : "";
     }
 }

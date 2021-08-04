@@ -6,7 +6,7 @@
             <div class="box radius-20">
                 @if (ChildContent is null)
                 {
-                    <p class="fc-6">Are you sure do you want to do?</p>
+                    <p class="fc-6">Are you sure do you want to continue?</p>
                 }
                 else
                 {
@@ -14,7 +14,7 @@
                 }
 
                 <div class="cta-wp mt-20 text-right">
-                    <button type="button" class="button fw-6 @LoadingBtn )"
+                    <button type="button" class="button fw-6 @IsLoadingBtn()"
                             @onclick="Continue" disabled="@IsLoading">
                         Yes
                     </button>
