@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using System.Threading.Tasks;
 
 namespace ClassLibrary.Controls
 {
     public partial class PopupConfirm
     {
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
         [Parameter]
         public EventCallback Agreed { get; set; }
 
@@ -30,7 +35,7 @@ namespace ClassLibrary.Controls
             ActiveCss = ActiveCss ?? "is-active";
         }
 
-        void Close() => ClosePopup.InvokeAsync();
+        async Task Close() => await ClosePopup.InvokeAsync();
 
         void Continue() => Agreed.InvokeAsync();
 
