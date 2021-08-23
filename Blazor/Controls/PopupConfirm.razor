@@ -13,13 +13,20 @@
                     @ChildContent
                 }
 
-                <div class="cta-wp mt-20 text-right">
-                    <button type="button" class="button fw-6 @IsLoadingBtn()"
-                            @onclick="Continue" disabled="@IsLoading">
-                        Yes
-                    </button>
+            <div class="cta-wp mt-20 text-right">
+                <button type="button" class="button fw-6 @IsLoadingBtn()"
+                        @onclick="Continue" disabled="@IsLoading">
+                    Yes
+                </button>
+                @if (ShowNoOption)
+                {
+                    <button type="button" class="button cst-text" @onclick="No">No</button>
+                }
+                @if (ShowCancelOption)
+                {
                     <button type="button" class="button cst-text" @onclick="Close">Cancel</button>
-                </div>
+                }
+            </div>
             </div>
         </div>
     </div>

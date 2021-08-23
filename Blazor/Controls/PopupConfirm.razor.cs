@@ -13,6 +13,9 @@ namespace ClassLibrary.Controls
         public EventCallback Agreed { get; set; }
 
         [Parameter]
+        public EventCallback NoOption { get; set; }
+
+        [Parameter]
         public EventCallback ClosePopup { get; set; }
 
         [Parameter]
@@ -30,13 +33,25 @@ namespace ClassLibrary.Controls
         [Parameter]
         public string ActiveCss { get; set; }
 
+        /// <summary>
+        /// Cancel Option is shown by default
+        /// </summary>
+        [Parameter]
+        public bool ShowCancelOption { get; set; } = true;
+
+        /// <summary>
+        /// No Option is not shown as default
+        /// </summary>
+        [Parameter]
+        public bool ShowNoOption { get; set; } = false;
+
         protected override void OnParametersSet()
         {
             ActiveCss = ActiveCss ?? "is-active";
         }
 
         async Task Close() => await ClosePopup.InvokeAsync();
-
+        async Task No() => await NoOption.InvokeAsync();
         void Continue() => Agreed.InvokeAsync();
 
         string IsLoadingBtn() => IsLoading || (LoadingBtn == "popupsubmit") ? "cst-loading" : "";
