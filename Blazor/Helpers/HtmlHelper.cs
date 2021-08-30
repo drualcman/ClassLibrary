@@ -55,7 +55,7 @@ namespace ClassLibrary.Helpers
         /// <param name="content"></param>
         /// <returns></returns>
         public static string StripHTML(this string content) => 
-            Regex.Replace(content, "<.*?>", string.Empty);
+            Regex.Replace(content, "<.*?>", string.Empty).Replace("&nbsp;", " ");
     }
 }
 
