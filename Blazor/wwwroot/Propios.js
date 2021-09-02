@@ -435,6 +435,17 @@
             _WebAPI('POST', url, success, error, data, content);
         },
         /**
+         * Call web service URL pure JAVASCRIPT
+         * @param {string} url ruta completa del webservice a llamar
+         * @param {Function} success funcion a ejecutar. Siempre recibe data como parametro
+         * @param {Function} error funcion a ejecutar en el error
+         * @param {string} data datos a enviar
+         * @param {string} content content-type to send, default "application/json; charset=utf-8"
+         */
+        put: function (url, success, error, data, content) {
+            _WebAPI('PUT', url, success, error, data, content);
+        },
+        /**
          * Load web page URL pure JAVASCRIPT
          * @param {string} url ruta completa del webservice a llamar
          * @param {any} target container use id or selector or DOM Object
@@ -2141,9 +2152,8 @@
         }
 
         xhr.open(type, url, true);
-        if (type === 'POST') {
-            if (content !== '') xhr.setRequestHeader("Content-Type", content);
-        }
+        //if content is different of "" then set the content type
+        if (content !== '') xhr.setRequestHeader("Content-Type", content);
         xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
         xhr.setRequestHeader("Access-Control-Allow-Method", type);
         xhr.setRequestHeader("Access-Control-Allow-Headers", "*");
@@ -2194,13 +2204,9 @@
             console.warn(t);
             if (error !== undefined && error !== null) ExternalFunc(error, SetError(xhr, t));
         };
-        if (type === 'POST') {
-            if (data === null || data === undefined || data === '') xhr.send();
-            else {
-                xhr.send(data);
-            }
-        }
-        else xhr.send();
+        //if have data then send the rquest with the data
+        if (data === null || data === undefined || data === '') xhr.send();
+        else xhr.send(data);
 
         function SetError(request, e) {
             let message = request.status >= 400 ? url + ' replied ' + request.status : request.statusText
