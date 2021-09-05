@@ -150,7 +150,7 @@ namespace ClassLibrary.Handlers
             }
             else
             {
-                OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadImageAsync"));
+                OnUploadErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"No files to upload", "UploadImageAsync"));
             }
             return await UploadFilesAuthAsync(urlEndPoint, content, ignoreFiles, field);
         }
@@ -188,13 +188,13 @@ namespace ClassLibrary.Handlers
             {
                 if (this.Count < 1)
                 {
-                    OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadFilesAsync"));
+                    OnUploadErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"No files to upload", "UploadFilesAsync"));
                 }
                 response = await HttpClient.PostAuthAsync(JSRuntime, urlEndPoint, content);
             }
             catch (Exception ex)
             {
-                OnAPIErrorEvent(this, new ArgumentException($"{urlEndPoint}: Exception: {ex.Message}", "UploadFilesAsync", ex));
+                OnAPIErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"{urlEndPoint}: Exception: {ex.Message}", "UploadFilesAsync", ex));
                 response = null;
             }
             return response;
@@ -308,7 +308,7 @@ namespace ClassLibrary.Handlers
             }
             else
             {
-                OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadImageAsync"));            
+                OnUploadErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"No files to upload", "UploadImageAsync"));            
             }
             return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, ignoreFiles, field);
         }
@@ -329,7 +329,7 @@ namespace ClassLibrary.Handlers
             {
                 if (this.Count < 1)
                 {
-                    OnUploadErrorEvent(this, new ArgumentException($"No files to upload", "UploadFilesAsync"));
+                    OnUploadErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"No files to upload", "UploadFilesAsync"));
                 }
                 using HttpResponseMessage result = await UploadFilesAuthAsync(urlEndPoint, content, ignoreFiles);
                 if (result.IsSuccessStatusCode) response = await result.Content.ReadFromJsonAsync<TModel>();
@@ -337,13 +337,13 @@ namespace ClassLibrary.Handlers
                 {
                     //decode the error from the call of the end point                        
                     string jsonElement = await result.Content.ReadAsStringAsync();
-                    OnAPIErrorEvent(this, new ArgumentException($"{urlEndPoint}: {result.ReasonPhrase} [{(int)result.StatusCode} {result.StatusCode}]: {jsonElement}", "UploadFilesAsync"));
+                    OnAPIErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"{urlEndPoint}: {result.ReasonPhrase} [{(int)result.StatusCode} {result.StatusCode}]: {jsonElement}", "UploadFilesAsync"));
                     response = default(TModel);
                 }
             }
             catch (Exception ex)
             {
-                OnAPIErrorEvent(this, new ArgumentException($"{urlEndPoint}: Exception: {ex.Message}", "UploadFilesAsync", ex));
+                OnAPIErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"{urlEndPoint}: Exception: {ex.Message}", "UploadFilesAsync", ex));
                 response = default(TModel);
             }
             return response;
