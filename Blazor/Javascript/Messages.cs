@@ -23,10 +23,11 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="target">selector where show the message</param>
         /// <param name="message">message to show</param>
+        /// <param name="timeout">timeout to out hide. 0 never hide</param>
         /// <returns></returns>
         public static void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
-            string target, string message) =>
-            BulmaMessageAsync(jsRuntume, type, target, "", message);
+            string target, string message, int timeout = 15) =>
+            BulmaMessageAsync(jsRuntume, type, target, "", message, timeout);
 
         /// <summary>
         /// Show Bulma Message
