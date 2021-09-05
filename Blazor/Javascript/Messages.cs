@@ -26,7 +26,7 @@ namespace ClassLibrary.Javascript
         /// <returns></returns>
         public static void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string message) =>
-            BulmaMessageAsync(jsRuntume, type, target, message);
+            BulmaMessageAsync(jsRuntume, type, target, "", message);
 
         /// <summary>
         /// Show Bulma Message
@@ -123,7 +123,7 @@ namespace ClassLibrary.Javascript
         /// <returns></returns>
         public static void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string message)=>
-            BootstrapMessageAsync(jsRuntume, type, target, message);
+            BootstrapMessageAsync(jsRuntume, type, target, "", message);
 
         /// <summary>
         /// Show Bootstrap Message
@@ -173,6 +173,16 @@ namespace ClassLibrary.Javascript
         #endregion
 
         #region custom
+        /// <summary>
+        /// Show Custom Message on the page
+        /// </summary>
+        /// <param name="type">status box to show</param>
+        /// <param name="target">parent element to eppend</param>
+        /// <param name="message">notification content</param>
+        /// <returns></returns>
+        public static void CustomMessageAsync(this IJSRuntime jsRuntime, BoxType type, string target, string message) =>
+               CustomMessageAsync(jsRuntime, type, target, "", message, 0, string.Empty);
+
         /// <summary>
         /// Show Custom Message on the page
         /// </summary>
