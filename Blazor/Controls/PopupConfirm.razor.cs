@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+
 using System.Threading.Tasks;
 
 namespace ClassLibrary.Controls
@@ -9,24 +10,42 @@ namespace ClassLibrary.Controls
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
 
+        /// <summary>
+        /// Delegate for the action agreed
+        /// </summary>
         [Parameter]
         public EventCallback Agreed { get; set; }
 
+        /// <summary>
+        /// Delegate for not agreed
+        /// </summary>
         [Parameter]
         public EventCallback NoOption { get; set; }
 
+        /// <summary>
+        /// Delegate for cancel action
+        /// </summary>
         [Parameter]
         public EventCallback ClosePopup { get; set; }
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
+        /// <summary>
+        /// Show or hide the popup
+        /// </summary>
         [Parameter]
         public bool IsShow { get; set; }
 
+        /// <summary>
+        /// Not in use only Kenenth know how to use
+        /// </summary>
         [Parameter]
         public string LoadingBtn { get; set; }
 
+        /// <summary>
+        /// If need to show loading action
+        /// </summary>
         [Parameter]
         public bool IsLoading { get; set; }
 
@@ -34,13 +53,13 @@ namespace ClassLibrary.Controls
         public string ActiveCss { get; set; }
 
         /// <summary>
-        /// Cancel Option is shown by default
+        /// Hide CANCEL only show AGREED or NOT (User with a deletegat in call back)
         /// </summary>
         [Parameter]
         public bool ShowCancelOption { get; set; } = true;
 
         /// <summary>
-        /// No Option is not shown as default
+        /// Hide the NOT AGREE, only AGREED or CANCEL (User with a deletegat in call back)
         /// </summary>
         [Parameter]
         public bool ShowNoOption { get; set; } = false;

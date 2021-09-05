@@ -13,16 +13,19 @@
                     @ChildContent
                 }
 
-            <div class="cta-wp mt-20 text-right">
+            <div class="cta-wp mt-20 text-right">  
+                @if (Agreed.HasDelegate)
+                {
                 <button type="button" class="button fw-6 @IsLoadingBtn()"
                         @onclick="Continue" disabled="@IsLoading">
                     Yes
                 </button>
-                @if (ShowNoOption)
+                }
+                @if (NoOption.HasDelegate)
                 {
                     <button type="button" class="button cst-text" @onclick="No">No</button>
                 }
-                @if (ShowCancelOption)
+                @if (ClosePopup.HasDelegate)
                 {
                     <button type="button" class="button cst-text" @onclick="Close">Cancel</button>
                 }
