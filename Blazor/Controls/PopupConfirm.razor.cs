@@ -64,6 +64,24 @@ namespace ClassLibrary.Controls
         [Parameter]
         public bool ShowNoOption { get; set; } = false;
 
+        /// <summary>
+        /// Setup teh text to show in the agreed button
+        /// </summary>
+        [Parameter]
+        public string AgreedText { get; set; } = "YES";
+
+        /// <summary>
+        /// Setup teh text to show in the NOT agreed button
+        /// </summary>
+        [Parameter]
+        public string NotAgreedText { get; set; } = "NO";
+
+        /// <summary>
+        /// Setup teh text to show in the cancel button
+        /// </summary>
+        [Parameter]
+        public string CancelText { get; set; } = "CANCEL";
+
         protected override void OnParametersSet()
         {
             ActiveCss = ActiveCss ?? "is-active";
