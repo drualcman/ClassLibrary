@@ -1,0 +1,44 @@
+﻿<div class="modal is-active">
+    <div class="modal-background" @onclick="CloseModal"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">@TableTitle</p>
+            <button type="button" class="button is-default mr-20" @onclick="UpdateList">Update List</button>
+            <button class="delete" aria-label="close" @onclick="CloseModal"></button>
+        </header>
+
+        <section class="modal-card-body">
+            <div class="field search-on-top">
+                <div class="control mw-3">
+                    <SearchOnTable Table="@TableId" />
+                </div>
+            </div>
+
+            <div class="table-container border radius">
+                <table class="table is-standard is-striped is-fullwidth" id="@TableId">
+                    <thead>
+                        <tr>
+                            @foreach (string header in DisplayNames)
+                            {
+                                <th class="no-wrap">@header</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @ChildContent
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            @if (OnSelect.HasDelegate)
+            {
+                <button class="button is-success" @onclick="Select">Select</button>
+            }
+            @if (OnClose.HasDelegate)
+            {
+                <button class="button" @onclick="CloseModal">Cancel</button>
+            }
+            </footer>
+    </div>
+</div>
