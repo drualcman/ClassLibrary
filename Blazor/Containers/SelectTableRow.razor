@@ -1,7 +1,11 @@
 ﻿@typeparam T
-@if (Items != null)
+@if (ChildContent != null)
 {
-    <tr>
-        
-    </tr>
+    foreach (T item in Items)
+    {
+        <tr class="@RowClass @(SetSelected(item))" @onclick="() => SelectedItem = item">
+            @ChildContent(item)
+        </tr>
+    }
+
 }

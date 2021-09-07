@@ -15,24 +15,37 @@ namespace ClassLibrary.Containers
         [Parameter]
         public string TableTitle { get; set; }
         [Parameter]
-        public List<string> DisplayNames { get; set; }
+        public RenderFragment TableHeader { get; set; }
         [Parameter]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment TableBody { get; set; }
+        [Parameter]
+        public RenderFragment TableFooter { get; set; }
         [Parameter]
         public EventCallback OnSelect { get; set; }
         [Parameter]
         public EventCallback OnClose { get; set; }
         [Parameter]
         public EventCallback OnUpdate { get; set; }
+
         #endregion
+
+        bool IsShowingModal;
+
         #region Methods
-        void CloseModal() => OnClose.InvokeAsync();
+        void CloseModal() => IsShowingModal = false;
 
         void UpdateList() => OnUpdate.InvokeAsync();
 
+        void Cancel()
+        {
+            IsShowingModal = false;
+            OnClose.InvokeAsync();
+        }
+
         void Select()
         {
-
+            IsShowingModal = false;
+            OnSelect.InvokeAsync();
         }
         #endregion
     }
