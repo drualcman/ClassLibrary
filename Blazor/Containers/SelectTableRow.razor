@@ -3,7 +3,7 @@
 {
     foreach (T item in Items)
     {
-        <tr class="@RowClass @(SetSelected(item))" @onclick="() => SelectedItem = item">
+        <tr class="@RowClass @(SetSelected(item))" @onclick="() => SelectTheItem(item)" @ondblclick="() => DoubleClick(item)">
             @ChildContent(item)
         </tr>
     }

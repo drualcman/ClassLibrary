@@ -10,31 +10,52 @@ namespace ClassLibrary.Containers
     public partial class ModalTable
     {
         #region Properties
+        /// <summary>
+        /// Give id to the table for use of SearchOnTable component
+        /// </summary>
         [Parameter]
         public string TableId { get; set; }
         [Parameter]
         public string TableTitle { get; set; }
+        /// <summary>
+        /// put the table heads in this fragment
+        /// </summary>
         [Parameter]
         public RenderFragment TableHeader { get; set; }
+        /// <summary>
+        /// put the loop of list, use the SelecTableRow component
+        /// </summary>
         [Parameter]
         public RenderFragment TableBody { get; set; }
+        /// <summary>
+        /// Put all what you want to put on table footer in here 
+        /// </summary>
         [Parameter]
         public RenderFragment TableFooter { get; set; }
+        /// <summary>
+        /// Invoke a method when select button is clicked
+        /// </summary>
         [Parameter]
         public EventCallback OnSelect { get; set; }
+        /// <summary>
+        /// invoke a method when cancel button is clicked
+        /// </summary>
         [Parameter]
         public EventCallback OnClose { get; set; }
+        /// <summary>
+        /// Invoke a method when update button is clicked. this is use to update the indexed  db from the live database
+        /// </summary>
         [Parameter]
         public EventCallback OnUpdate { get; set; }
+        [Parameter]
+        public bool IsShowingModal { get; set; }
 
         #endregion
 
-        bool IsShowingModal;
+        
 
         #region Methods
         void CloseModal() => IsShowingModal = false;
-
-        void UpdateList() => OnUpdate.InvokeAsync();
 
         void Cancel()
         {
@@ -42,11 +63,7 @@ namespace ClassLibrary.Containers
             OnClose.InvokeAsync();
         }
 
-        void Select()
-        {
-            IsShowingModal = false;
-            OnSelect.InvokeAsync();
-        }
+        void Select() => OnSelect.InvokeAsync();
         #endregion
     }
 }
