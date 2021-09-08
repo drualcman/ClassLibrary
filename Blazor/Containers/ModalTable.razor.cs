@@ -52,14 +52,11 @@ namespace ClassLibrary.Containers
 
         #endregion
 
-        
-
         #region Methods
         void CloseModal() => IsShowingModal = false;
 
         void Cancel()
         {
-            IsShowingModal = false;
             OnClose.InvokeAsync();
         }
 

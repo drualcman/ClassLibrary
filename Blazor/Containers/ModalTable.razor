@@ -13,7 +13,7 @@
             {
                 <button type="button" class="button is-default mr-20" @onclick="OnUpdate">Update List</button>
             }
-            <button class="delete" aria-label="close" @onclick="CloseModal"></button>
+            <button type="button" class="delete" aria-label="close" @onclick="CloseModal"></button>
         </header>
 
         <section class="modal-card-body">
@@ -40,11 +40,11 @@
         <footer class="modal-card-foot">
             @if (OnSelect.HasDelegate)
             {
-                <button class="button is-success" @onclick="Select">Select</button>
+                <button type="button" class="button is-success" @onclick="Select">Select</button>
             }
             @if (OnClose.HasDelegate)
             {
-                <button class="button" @onclick="Cancel">Cancel</button>
+                <button type="button" class="button" @onclick="Cancel">Cancel</button>
             }
         </footer>
     </div>
