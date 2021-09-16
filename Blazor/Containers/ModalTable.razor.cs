@@ -18,6 +18,11 @@ namespace ClassLibrary.Containers
         [Parameter]
         public string TableTitle { get; set; }
         /// <summary>
+        /// content to show in a button to open a popup, default contect a magnifier
+        /// </summary>
+        [Parameter]
+        public RenderFragment ButtonContent { get; set; }
+        /// <summary>
         /// put the table heads in this fragment
         /// </summary>
         [Parameter]
@@ -53,7 +58,7 @@ namespace ClassLibrary.Containers
         #endregion
 
         #region Methods
-        void CloseModal() => IsShowingModal = false;
+        public void CloseModal() => IsShowingModal = false;
 
         void Cancel()
         {

@@ -32,18 +32,13 @@ namespace ClassLibrary.Containers
         /// <summary>
         /// Pass the variable for getting the active item or row
         /// </summary>
-        [CascadingParameter(Name = "SelectedItem")]
+        [Parameter]
         public T SelectedItem { get; set; }
         /// <summary>
         /// Update the selecteditem for the parent component get the change
         /// </summary>
         [Parameter]
         public EventCallback<T> SelectItem { get; set; }
-        /// <summary>
-        /// Invoke a method to use the selected item
-        /// </summary>
-        [Parameter]
-        public EventCallback<T> OnChooseItem{ get; set; }
         /// <summary>
         /// Invoke a method to use the selected item
         /// </summary>
@@ -64,13 +59,16 @@ namespace ClassLibrary.Containers
             else return string.Empty;
         }
 
-        void SelectTheItem(T item) => SelectItem.InvokeAsync(item);
+        void SelectTheItem(T item)
+        {
+            SelectedItem = item;
+            SelectItem.InvokeAsync(SelectedItem);
+        }
 
         void DoubleClick(T item)
         {
-             SelectItem.InvokeAsync(item);
-             OnChooseItem.InvokeAsync(item);
-             OnDoubleClick.InvokeAsync();
+            SelectTheItem(item);
+            OnDoubleClick.InvokeAsync();
         }
     }
 }

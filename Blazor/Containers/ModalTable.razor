@@ -1,52 +1,62 @@
 ﻿<button type="button" class="button is-default fc-6 fc-6 " @onclick="() => IsShowingModal = true">
-    <i class="fas fa-search"></i>
+    @if (ButtonContent is null)
+    {
+        <i class="fas fa-search"></i>
+    }
+    else
+    {
+        @ButtonContent
+    }
 </button>
 
 @if (IsShowingModal)
 {
-<div class="modal is-active">
-    <div class="modal-background" @onclick="CloseModal"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">@TableTitle</p>
-            @if (OnUpdate.HasDelegate)
-            {
-                <button type="button" class="button is-default mr-20" @onclick="OnUpdate">Update List</button>
-            }
-            <button type="button" class="delete" aria-label="close" @onclick="CloseModal"></button>
-        </header>
+    <div class="modal is-active">
+        <div class="modal-background" @onclick="CloseModal"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">@TableTitle</p>
+                @if (OnUpdate.HasDelegate)
+                {
+                    <button type="button" class="button is-default mr-20" @onclick="OnUpdate">Update List</button>
+                }
+                <button type="button" class="delete" aria-label="close" @onclick="CloseModal"></button>
+            </header>
 
-        <section class="modal-card-body">
-            <div class="field search-on-top">
-                <div class="control mw-3">
-                    <SearchOnTable Table="@TableId" />
+            <section class="modal-card-body">
+                @if (!string.IsNullOrEmpty(TableId))
+                {
+                    <div class="field search-on-top">
+                        <div class="control mw-3">
+                            <SearchOnTable Table="@TableId" />
+                        </div>
+                    </div>
+                }
+
+                <div class="table-container border radius">
+                    <table class="table is-standard is-striped is-fullwidth" id="@TableId">
+                        <thead>
+                            @TableHeader
+                        </thead>
+                        <tbody>
+                            @TableBody
+                        </tbody>
+                        <tfoot>
+                            @TableFooter
+                        </tfoot>
+                    </table>
                 </div>
-            </div>
-
-            <div class="table-container border radius">
-                <table class="table is-standard is-striped is-fullwidth" id="@TableId">
-                    <thead>
-                        @TableHeader
-                    </thead>
-                    <tbody>
-                        @TableBody
-                    </tbody>
-                    <tfoot>
-                        @TableFooter
-                    </tfoot>
-                </table>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            @if (OnSelect.HasDelegate)
-            {
-                <button type="button" class="button is-success" @onclick="Select">Select</button>
-            }
-            @if (OnClose.HasDelegate)
-            {
-                <button type="button" class="button" @onclick="Cancel">Cancel</button>
-            }
-        </footer>
+            </section>
+            <footer class="modal-card-foot">
+                @if (OnSelect.HasDelegate)
+                {
+                    <button type="button" class="button is-success" @onclick="Select">Select</button>
+                }
+                @if (OnClose.HasDelegate)
+                {
+                    <button type="button" class="button" @onclick="Cancel">Cancel</button>
+                }
+            </footer>
+        </div>
     </div>
-</div>
 }

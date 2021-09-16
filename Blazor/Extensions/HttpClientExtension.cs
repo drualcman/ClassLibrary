@@ -26,7 +26,7 @@ namespace ClassLibrary.Extensions
         public static async Task<object> GetAuthAsync(this HttpClient httpClient, string token, string requestUri)
         {
             //set the token for the authentication            
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             object response = await httpClient.GetFromJsonAsync<object>(requestUri);
             return response;
         }
@@ -87,7 +87,7 @@ namespace ClassLibrary.Extensions
         {
             string token = await jsRuntime.GetUserTokenAsync();
             //set the token for the authentication            
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             HttpResponseMessage response = await httpClient.GetAsync(requestUri);
             return response;
         }
@@ -96,7 +96,7 @@ namespace ClassLibrary.Extensions
         {
             string token = await jsRuntime.GetUserTokenAsync();
             //set the token for the authentication            
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             object response = await httpClient.GetFromJsonAsync<object>(requestUri);
             return response;
         }
