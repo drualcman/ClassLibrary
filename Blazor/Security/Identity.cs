@@ -48,7 +48,7 @@ namespace ClassLibrary.Security
             bool result;
             try
             {
-                string jsonString = JsonSerializer.Serialize<TUser>(user);
+                string jsonString = JsonSerializer.Serialize(user);
                 string key = token.Split('.')[2];
                 Cipher.Secret e = new Cipher.Secret(key);
                 string jsonData = await e.EncriptAsync(jsonString);
@@ -203,7 +203,6 @@ namespace ClassLibrary.Security
         public static async Task<TUser> GetUserAsync<TUser>(IJSRuntime jsRuntime) where TUser: new ()
         {
             string data = await jsRuntime.GetUserDataAsync();
-
             if (string.IsNullOrEmpty(data)) return new TUser();
             else
             {
@@ -324,24 +323,26 @@ namespace ClassLibrary.Security
         /// </summary>
         /// <typeparam name="TUser"></typeparam>
         /// <param name="user"></param>
-        /// <param name="authenticationType">Set what authentication will used</param>
         /// <param name="displayName">Who is the property to show default like user name in the Identity</param>
         /// <returns></returns>
-        public static List<Claim> SetClaims<TUser>(TUser user, string authenticationType, string displayName)
+        public static List<Claim> SetClaims<TUser>(string displayName, TUser user)
         {
             List<Claim> claims = new List<Claim>();
             //use reflexion to get dynamic the properties about the user object
             PropertyInfo[] properties = typeof(TUser).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             bool foundName = false;
-            foreach (PropertyInfo property in properties)
+
+            int c = properties.Length;
+            int i = 0;
+            for (i = 0; i < c; i++)
             {
                 //get property name
-                string myType = property.Name;
+                string myType = properties[i].Name;
                 //get value of the property
-                string myValue = property.GetValue(user).ToString();
+                string myValue = properties[i].GetValue(user).ToString();
 
                 //if it's Authentication Ignore don't insert in the claims
-                Attributes.Identity identityAttributes = property.GetCustomAttribute<Attributes.Identity>();
+                Attributes.Identity identityAttributes = properties[i].GetCustomAttribute<Attributes.Identity>();
                 if (identityAttributes is null)
                 {
                     claims.Add(new Claim(myType, myValue));
@@ -362,19 +363,22 @@ namespace ClassLibrary.Security
             }
             if (!foundName)
             {
-                foreach (PropertyInfo property in properties)
-                {
+                i = 0;
+                do
+                { 
                     //get property name
-                    string myType = property.Name;
+                    string myType = properties[i].Name;
                     //get value of the property
-                    string myValue = property.GetValue(user).ToString();
+                    string myValue = properties[i].GetValue(user).ToString();
 
                     if (myType.ToLower() == displayName.ToLower())
                     {
                         claims.Add(new Claim(ClaimTypes.Name, myValue));
                         foundName = true;
                     }
-                }
+                    i++;
+                } while (!foundName && i < c);
+
                 if (!foundName)
                 {
                     //not found DisplayName property, search a email
@@ -397,7 +401,7 @@ namespace ClassLibrary.Security
         /// <returns></returns>
         public static ClaimsIdentity SetUserData<TUser>(TUser user, string authenticationType, string displayName)
         {
-            List<Claim> claims = SetClaims(user, authenticationType, displayName);           
+            List<Claim> claims = SetClaims(displayName, user);           
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, authenticationType);
             return claimsIdentity;
         }
