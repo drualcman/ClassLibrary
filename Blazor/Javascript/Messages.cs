@@ -23,7 +23,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="target">selector where show the message</param>
         /// <param name="message">message to show</param>
-        /// <param name="timeout">timeout to out hide. 0 never hide</param>
+        /// <param name="timeout">timeout in seconds to out hide. 0 never hide</param>
         /// <returns></returns>
         public static void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string message, int timeout = 15) =>
@@ -48,7 +48,7 @@ namespace ClassLibrary.Javascript
         /// <param name="target">selector where show the message</param>
         /// <param name="title">title for the message</param>
         /// <param name="message">message to show</param>
-        /// <param name="timeout">timeout to out hide. 0 never hide</param>
+        /// <param name="timeout">timeout in seconds to out hide. 0 never hide</param>
         /// <returns></returns>
         public static async void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type, 
             string target, string title, string message, int timeout) 
@@ -100,7 +100,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="target">selector where show the message</param>
         /// <param name="message">message to show</param>
-        /// <param name="timeout">timeout to out hide. 0 never hide</param>
+        /// <param name="timeout">timeout in seconds to out hide. 0 never hide</param>
         /// <returns></returns>
         public static async ValueTask BulmaWaitingAsync(this IJSRuntime jsRuntume, string target, string message, int timeout) =>
             await jsRuntume.InvokeVoidAsync("$p.MsgWaiting", target, message, timeout);
@@ -145,7 +145,7 @@ namespace ClassLibrary.Javascript
         /// <param name="target">selector where show the message</param>
         /// <param name="title">title for the message</param>
         /// <param name="message">message to show</param>
-        /// <param name="timeout">timeout to out hide. 0 never hide</param>
+        /// <param name="timeout">timeout in seconds to out hide. 0 never hide</param>
         /// <returns></returns>
         public static async void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string title, string message, int timeout)
@@ -272,7 +272,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="message">message content</param>
         /// <param name="status">popup status ex. success, danger</param>
-        /// <param name="time">time limit on showing the popup</param>
+        /// <param name="time">timeout in seconds on showing the popup</param>
         /// <returns></returns>
         public static void PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int time)
         {
@@ -285,7 +285,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="message">message content</param>
         /// <param name="status">popup status ex. success, danger</param>
-        /// <param name="time">time limit on showing the popup</param>
+        /// <param name="time">timeout in seconds on showing the popup</param>
         /// <param name="additional">additional popup design</param>
         /// <returns></returns>
         public static async void PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int? time, string additional)
