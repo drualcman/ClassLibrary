@@ -1,4 +1,4 @@
-﻿<button type="button" class="button is-default fc-6 fc-6 " @onclick="() => IsShowingModal = true">
+﻿<button type="button" class="button is-default fc-6 fc-6 " @onclick="() => IsShowingModal = true" disabled="@IsButtonDisabled">
     @if (ButtonContent is null)
     {
         <i class="fas fa-search"></i>

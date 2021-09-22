@@ -52,6 +52,11 @@ namespace ClassLibrary.Containers
         /// </summary>
         [Parameter]
         public EventCallback OnUpdate { get; set; }
+        /// <summary>
+        /// Set the disabled attribute of the button
+        /// </summary>
+        [Parameter]
+        public bool IsButtonDisabled { get; set; }
         [Parameter]
         public bool IsShowingModal { get; set; }
 
