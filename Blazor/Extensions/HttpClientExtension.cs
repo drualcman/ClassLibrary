@@ -23,6 +23,7 @@ namespace ClassLibrary.Extensions
             HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
             return response;
         }
+
         public static async Task<object> GetAuthAsync(this HttpClient httpClient, string token, string requestUri)
         {
             //set the token for the authentication            
