@@ -59,6 +59,8 @@ namespace ClassLibrary.Containers
         public bool IsButtonDisabled { get; set; }
         [Parameter]
         public bool IsShowingModal { get; set; }
+        [Parameter]
+        public string CssClass { get; set; } = "button is-default fc-6 fc-6";
 
         #endregion
 
