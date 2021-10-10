@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.JSInterop;
 
 namespace ClassLibrary.Service
@@ -13,5 +13,6 @@ namespace ClassLibrary.Service
         public HttpClient Client { get; }
         public NavigationManager Navigation { get; }
         public IJSRuntime JsRuntime { get; }
+        public IAccessTokenProvider AccessTokenProvider { get; }
     }    
 }
