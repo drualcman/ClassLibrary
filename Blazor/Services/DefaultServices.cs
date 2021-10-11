@@ -1,6 +1,5 @@
 ﻿using ClassLibrary.Logger;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using System.Net.Http;
@@ -16,23 +15,22 @@ namespace ClassLibrary.Service
             this.Client = Client;
             this.Navigation = nav;
             this.JsRuntime = js;
-            this.AccessTokenProvider = null;
         }
 
-        public DefaultServices(HttpClient Client, 
-            NavigationManager nav, 
-            IJSRuntime js,
-            IAccessTokenProvider accessTokenProvider)
-        {
-            this.Client = Client;
-            this.Navigation = nav;
-            this.JsRuntime = js;
-            this.AccessTokenProvider = accessTokenProvider;
-        }
+        //public DefaultServices(HttpClient Client, 
+        //    NavigationManager nav, 
+        //    IJSRuntime js,
+        //    IAccessTokenProvider accessTokenProvider)
+        //{
+        //    this.Client = Client;
+        //    this.Navigation = nav;
+        //    this.JsRuntime = js;
+        //    this.AccessTokenProvider = accessTokenProvider;
+        //}
 
         public HttpClient Client { get; }
         public NavigationManager Navigation { get; }
         public IJSRuntime JsRuntime { get; }
-        public IAccessTokenProvider AccessTokenProvider { get; }
+        //public IAccessTokenProvider AccessTokenProvider { get; }
     }
 }
