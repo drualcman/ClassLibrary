@@ -290,7 +290,7 @@ namespace ClassLibrary.Javascript
         /// <returns></returns>
         public static async void PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status, int? time, string additional)
         {
-            await jsRuntume.InvokeVoidAsync("PopupResponse", message, status, time, additional);
+            await jsRuntume.InvokeVoidAsync("PopupResponseMessage", message, status, time, additional);
         }
         #endregion
     }
