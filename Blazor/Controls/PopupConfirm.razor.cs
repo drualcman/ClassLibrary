@@ -81,6 +81,12 @@ namespace ClassLibrary.Controls
         /// </summary>
         [Parameter]
         public string CancelText { get; set; } = "CANCEL";
+        [Parameter]
+        public string YesBtnID { get; set; }
+        [Parameter]
+        public string NoBtnID { get; set; }
+        [Parameter]
+        public string CancelBtnID { get; set; }
 
         protected override void OnParametersSet()
         {

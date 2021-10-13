@@ -17,17 +17,22 @@
                 @if (Agreed.HasDelegate)
                 {
                 <button type="button" class="button fw-6 @IsLoadingBtn()"
+                        id="@(string.IsNullOrEmpty(YesBtnID) ? "" : YesBtnID)"
                         @onclick="Continue" disabled="@IsLoading">
                     @AgreedText
                 </button>
                 }
                 @if (NoOption.HasDelegate)
                 {
-                    <button type="button" class="button cst-text" @onclick="No">@NotAgreedText</button>
+                    <button type="button" class="button cst-text"
+                             id="@(string.IsNullOrEmpty(NoBtnID) ? "" : NoBtnID)"
+                            @onclick="No">@NotAgreedText</button>
                 }
                 @if (ClosePopup.HasDelegate)
                 {
-                    <button type="button" class="button cst-text" @onclick="Close">@CancelText</button>
+                    <button type="button" class="button cst-text"
+                            id="@(string.IsNullOrEmpty(CancelBtnID) ? "" : CancelBtnID)"
+                            @onclick="Close">@CancelText</button>
                 }
             </div>
             </div>
