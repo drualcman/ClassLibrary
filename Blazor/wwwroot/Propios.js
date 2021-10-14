@@ -374,14 +374,17 @@
         GetOffset: function (el) {
             var _x = 0;
             var _y = 0;
-            var s = el.offsetParent;
+            var _h = 0;
+            var _w = 0;
+            _h = el.offsetHeight;
+            _w = el.offsetWidth;
             while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
                 _x += el.offsetLeft - el.scrollLeft;
                 _y += el.offsetTop - el.scrollTop;
                 el = el.offsetParent;
             }
 
-            return { top: _y, left: _x };
+            return { top: _y, left: _x, height: _h, width: _w };
         },
         /**
          * Get the real id for the element in ASP pages.
