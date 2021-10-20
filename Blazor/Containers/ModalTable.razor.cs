@@ -59,6 +59,12 @@ namespace ClassLibrary.Containers
         public bool IsButtonDisabled { get; set; }
         [Parameter]
         public bool IsShowingModal { get; set; }
+        /// <summary>
+        /// Update Button Text
+        /// </summary>
+        [Parameter]
+        public string UpdateText { get; set; } = "DB Sync";
+
         [Parameter]
         public string CssClass { get; set; } = "button is-default fc-6 fc-6";
 

@@ -18,7 +18,10 @@
                 <p class="modal-card-title">@TableTitle</p>
                 @if (OnUpdate.HasDelegate)
                 {
-                    <button type="button" class="button is-default mr-20" @onclick="OnUpdate">Update List</button>
+                    <button type="button" class="button is-warning fc-6 cst-item modal-button mr-20" @onclick="OnUpdate">
+                        <span class="icon"><i class="fas fa-recycle"></i></span>
+                        <span>@UpdateText</span>
+                    </button>
                 }
                 <button type="button" class="delete" aria-label="close" @onclick="CloseModal"></button>
             </header>
