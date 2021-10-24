@@ -12,6 +12,8 @@ namespace ClassLibrary.Controls
 
         [Parameter]
         public string Table { get; set; }
+        [Parameter]
+        public string SearchInputUniqueClass { get; set; }
 
         string SearchText;
 

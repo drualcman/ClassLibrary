@@ -1,4 +1,4 @@
-﻿<button type="button" class="@CssClass" @onclick="() => IsShowingModal = true" disabled="@IsButtonDisabled">
+﻿<button type="button" class="@CssClass" @onclick="OpenModal" disabled="@IsButtonDisabled">
     @if (ButtonContent is null)
     {
         <i class="fas fa-search"></i>
@@ -31,7 +31,7 @@
                 {
                     <div class="field search-on-top">
                         <div class="control mw-3">
-                            <SearchOnTable Table="@TableId" />
+                            <SearchOnTable Table="@TableId" SearchInputUniqueClass="@SearchInputUniqueClass" />
                         </div>
                     </div>
                 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace ClassLibrary.Containers
     public partial class ModalTable
     {
         #region Properties
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
         /// <summary>
         /// Give id to the table for use of SearchOnTable component
         /// </summary>
@@ -68,11 +71,30 @@ namespace ClassLibrary.Containers
 
         [Parameter]
         public bool IsShowingModal { get; set; }
+        [Parameter]
+        public string SearchInputUniqueClass { get; set; }
 
         #endregion
         #region MyRegion
         #endregion
         #region Methods
+
+        async Task OpenModal()
+        {
+            IsShowingModal = true;
+            if (!string.IsNullOrEmpty(SearchInputUniqueClass))
+            {
+                try
+                {
+                    await Task.Yield();
+                    await JSRuntime.InvokeVoidAsync("$p.Focus", $".{SearchInputUniqueClass}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+        }
         public void CloseModal() => IsShowingModal = false;
 
         void Cancel()
