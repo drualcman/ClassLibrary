@@ -66,9 +66,11 @@ namespace ClassLibrary.Containers
         [Parameter]
         public string CssClass { get; set; } = "button is-default fc-6 fc-6";
 
+        [Parameter]
+        public bool IsShowingModal { get; set; }
+
         #endregion
         #region MyRegion
-        bool IsShowingModal;
         #endregion
         #region Methods
         public void CloseModal() => IsShowingModal = false;
