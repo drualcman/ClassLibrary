@@ -57,8 +57,6 @@ namespace ClassLibrary.Containers
         /// </summary>
         [Parameter]
         public bool IsButtonDisabled { get; set; }
-        [Parameter]
-        public bool IsShowingModal { get; set; }
         /// <summary>
         /// Update Button Text
         /// </summary>
@@ -69,7 +67,9 @@ namespace ClassLibrary.Containers
         public string CssClass { get; set; } = "button is-default fc-6 fc-6";
 
         #endregion
-
+        #region MyRegion
+        bool IsShowingModal;
+        #endregion
         #region Methods
         public void CloseModal() => IsShowingModal = false;
 
