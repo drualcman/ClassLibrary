@@ -13,10 +13,10 @@ namespace ClassLibrary.Extensions
 {
     public static partial class HttpClientJsonExtensions
     {
-        public static async Task<HttpResponseMessage> SendAuthAsync(this HttpClient httpClient, IJSRuntime jsRuntime, HttpMethod method, string requestUri)
+        public static async Task<HttpResponseMessage> SendAuthAsync(this HttpClient httpClient, IJSRuntime jsRuntime, HttpMethod method, string requestUri, HttpContent value = null)
         {
             string token = await jsRuntime.GetUserTokenAsync();
-            return await httpClient.SendAuthAsync(token, method, requestUri);
+            return await httpClient.SendAuthAsync(token, method, requestUri,value);
         }
 
         public static async Task<HttpResponseMessage> GetAuthAsync(this HttpClient httpClient, string requestUri, IJSRuntime jsRuntime)
@@ -61,6 +61,24 @@ namespace ClassLibrary.Extensions
             return await httpClient.PostAuthAsync(token, requestUri, value);
         }
 
-  
+
+        #region put
+        public static async Task<HttpResponseMessage> PutAuthAsync(this HttpClient httpClient, IJSRuntime jsRuntime, string requestUri)
+        {
+            string token = await jsRuntime.GetUserTokenAsync();
+            return await httpClient.PutAuthAsync(token, requestUri);
+        }
+        public static async Task<HttpResponseMessage> PutAuthAsync(this HttpClient httpClient, IJSRuntime jsRuntime, string requestUri, HttpContent value)
+        {
+            string token = await jsRuntime.GetUserTokenAsync();
+            return await httpClient.PutAuthAsync(token, requestUri, value);
+        }
+        public static async Task<HttpResponseMessage> PutAuthAsync<TValue>(this HttpClient httpClient, IJSRuntime jsRuntime, string requestUri, TValue value)
+        {
+            string token = await jsRuntime.GetUserTokenAsync();
+            return await httpClient.PutAuthAsync(token, requestUri, value);
+        }
+        #endregion
+
     }
 }

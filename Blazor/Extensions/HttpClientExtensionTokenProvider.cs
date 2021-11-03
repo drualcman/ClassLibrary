@@ -29,10 +29,10 @@ namespace ClassLibrary.Extensions
             return tokenResult;
         }
 
-        public static async Task<HttpResponseMessage> SendAuthAsync(this HttpClient httpClient, IAccessTokenProvider accessTokenProvider, HttpMethod method, string requestUri)
+        public static async Task<HttpResponseMessage> SendAuthAsync(this HttpClient httpClient, IAccessTokenProvider accessTokenProvider, HttpMethod method, string requestUri, HttpContent value = null)
         {
             string token = await GetTocken(accessTokenProvider);
-            return await httpClient.SendAuthAsync(token, method, requestUri);
+            return await httpClient.SendAuthAsync(token, method, requestUri, value);
         }
 
         public static async Task<HttpResponseMessage> GetAuthAsync(this HttpClient httpClient, string requestUri, IAccessTokenProvider accessTokenProvider)
@@ -76,5 +76,24 @@ namespace ClassLibrary.Extensions
             string token = await GetTocken(accessTokenProvider);
             return await httpClient.PostAuthAsync(token, requestUri, value);
         }
+
+
+        #region put
+        public static async Task<HttpResponseMessage> PutAuthAsync(this HttpClient httpClient, IAccessTokenProvider accessTokenProvider, string requestUri)
+        {
+            string token = await GetTocken(accessTokenProvider);
+            return await httpClient.PutAuthAsync(token, requestUri);
+        }
+        public static async Task<HttpResponseMessage> PutAuthAsync(this HttpClient httpClient, IAccessTokenProvider accessTokenProvider, string requestUri, HttpContent value)
+        {
+            string token = await GetTocken(accessTokenProvider);
+            return await httpClient.PutAuthAsync(token, requestUri, value);
+        }
+        public static async Task<HttpResponseMessage> PutAuthAsync<TValue>(this HttpClient httpClient, IAccessTokenProvider accessTokenProvider, string requestUri, TValue value)
+        {
+            string token = await GetTocken(accessTokenProvider);
+            return await httpClient.PutAuthAsync(token, requestUri, value);
+        }
+        #endregion
     }
 }
