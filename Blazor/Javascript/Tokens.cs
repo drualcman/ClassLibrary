@@ -87,13 +87,12 @@ namespace ClassLibrary.Javascript
             if (string.IsNullOrEmpty(token)) result = true;
             else
             {
-                string payload = token.Split('.')[1];
+                string payload = Cipher.Hash.Base64.Base64UrlDecode(token.Split('.')[1]);
 
                 JsonElement jsonElement = JsonSerializer.Deserialize<JsonElement>(payload);
-                JsonElement expire = jsonElement.GetProperty("exp");
-                int expireTime = expire.GetInt32();
-                DateTime date = new DateTime();
-                date.AddSeconds(expireTime);
+                //JsonElement iat = jsonElement.GetProperty("iat");
+                JsonElement exp = jsonElement.GetProperty("exp");
+                DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds(exp.GetInt64());
                 result = date < DateTime.Now;
             }
             return result;
