@@ -88,9 +88,7 @@ namespace ClassLibrary.Javascript
             else
             {
                 string payload = Cipher.Hash.Base64.Base64UrlDecode(token.Split('.')[1]);
-
                 JsonElement jsonElement = JsonSerializer.Deserialize<JsonElement>(payload);
-                //JsonElement iat = jsonElement.GetProperty("iat");
                 JsonElement exp = jsonElement.GetProperty("exp");
                 DateTimeOffset date = DateTimeOffset.FromUnixTimeSeconds(exp.GetInt64());
                 result = date < DateTime.Now;
