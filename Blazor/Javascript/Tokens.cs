@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace ClassLibrary.Javascript
 {
@@ -70,6 +71,32 @@ namespace ClassLibrary.Javascript
             jsRuntime.LocalStorageSetAsync("blazor", data);
             jsRuntime.LocalStorageSetAsync("token", token);
             return Task.CompletedTask;
+        }
+
+
+        /// <summary>
+        /// Set the access token and claims about the active user and return the user model
+        /// Authentication using jwt authentication
+        /// </summary>
+        /// <param name="jsRuntime"></param>
+        /// <returns></returns>
+        public static async Task<bool> IsTokenExpiredAsync(this IJSRuntime jsRuntime)
+        {
+            string token = await jsRuntime.LocalStorageGetAsync("token");
+            bool result;
+            if (string.IsNullOrEmpty(token)) result = true;
+            else
+            {
+                string payload = token.Split('.')[1];
+
+                JsonElement jsonElement = JsonSerializer.Deserialize<JsonElement>(payload);
+                JsonElement expire = jsonElement.GetProperty("exp");
+                int expireTime = expire.GetInt32();
+                DateTime date = new DateTime();
+                date.AddSeconds(expireTime);
+                result = date < DateTime.Now;
+            }
+            return result;
         }
         #endregion
 
