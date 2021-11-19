@@ -1,0 +1,35 @@
+.pagination-footer-container {
+    ul {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+
+        li {
+            padding: 9px 18px;
+            color: #555;
+            border: 1px solid #dedede;
+            cursor: pointer;
+            margin-right: -1px;
+
+            &.active {
+                background: #106FFF;
+                border-color: #106FFF;
+                color: #fff;
+            }
+
+            &:hover {
+                background: #eee;
+                border-color: #eee;
+            }
+
+            &:first-child {
+                border-radius: 6px 0 0 6px;
+            }
+
+            &:last-child {
+                border-radius: 0 6px 6px 0;
+                margin-right: 0;
+            }
+        }
+    }
+}
