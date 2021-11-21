@@ -1,39 +1,13 @@
 ﻿using ClassLibrary.Attributes;
+using ClassLibrary.Controls.PaginationLists;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
-/*
-    how to use this component
-     @if (myToppings == null)
-    {
-        <div class="loading-bar"></div>
-    }
-    else
-    {
-        <Table Items="myToppings">
-            <Head>
-                <th>Id</th>
-                <th>Nombre</th>
-            </Head>
-            <Body>
-                <td>@context.Id</td>
-                <td>@context.Name</td>
-            </Body>
-        </Table>
-    }
-    @if (myPizzas == null)
-    {
-        <div class="loading-bar"></div>
-    }
-    else
-    {
-        <Table Items="myPizzas" />
-    }
- */
 
 namespace ClassLibrary.Containers
 {
@@ -43,34 +17,120 @@ namespace ClassLibrary.Containers
     /// <typeparam name="T"></typeparam>
     public partial class Table<T> : ComponentBase
     {
-        [Parameter]
-        public IEnumerable<T> Items { get; set; }
-        
-        [Parameter]
-        public RenderFragment Head { get; set; }
-
-        [Parameter]
-        public RenderFragment<T> Body { get; set; }
-
-        [Parameter]
-        public RenderFragment Loading { get; set; }
-
-        [Parameter]
-        public RenderFragment Empty { get; set; }
-
+        #region Main Parameters
+        /// <summary>
+        /// Set directly the items
+        /// </summary>
+        [Parameter] public IEnumerable<T> Items { get; set; }
+        /// <summary>
+        /// Set a function to load the items
+        /// </summary>
+        [Parameter] public Func<Task<IEnumerable<T>>> Loader { get; set; }
+        [Parameter] public RenderFragment Head { get; set; }
+        [Parameter] public RenderFragment<T> Body { get; set; }
+        [Parameter] public RenderFragment Loading { get; set; }
+        [Parameter]  public RenderFragment Empty { get; set; }
         /// <summary>
         /// Only one with this property
         /// </summary>
-        [Parameter(CaptureUnmatchedValues = true)]
-        public Dictionary<string, object> AdditionalAttributes { get; set; }
+        [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+        #endregion
 
-        MarkupString DefaultHead;
-        MarkupString DefaultBody;
-        private readonly string DefaultCSSClass = "table is-bordered is-striped is-hoverable is-fullwidth";
+        #region pagging
+        [Parameter] public string SelectCss { get; set; } = "select";
+
+        private int PageSizeBK = 10;
+
+        public int PageSize
+        {
+            get { return PageSizeBK; }
+            set {
+                PageSizeBK = value;
+                if (Paged is not null) Paged = PagedList<T>.ToPagedList(Items, 1, PageSizeBK);
+            }
+        }
+
+        PagedList<T> Paged;
+        Task ToPage(int page) =>
+            Task.FromResult(Paged = PagedList<T>.ToPagedList(Items, page, PageSizeBK));
+        #endregion
+
+        #region initializing
+        protected override async Task OnParametersSetAsync()
+        {
+            if (Loader is not null && Items is null)
+            {
+                Items = await Loader();
+                await ToPage(1);
+                DefaultView();
+            }
+        }
 
         protected override void OnParametersSet()
         {
-            if (Items != null)
+            if (Items is not null)
+            {                
+                ToPage(1);
+                DefaultView();
+            }
+        }
+        #endregion
+
+        #region Rows
+        /// <summary>
+        /// Custom class for table row, put in here
+        /// </summary>
+        [Parameter] public string RowCss { get; set; }
+        /// <summary>
+        /// Custom class for active row
+        /// </summary>
+        [Parameter] public string RowCssSelected { get; set; }
+        /// <summary>
+        /// Update the selecteditem for the parent component get the change
+        /// </summary>
+        [Parameter]  public EventCallback<T> OnClick { get; set; }
+        /// <summary>
+        /// Invoke a method to use the selected item
+        /// </summary>
+        [Parameter]  public EventCallback<T> OnDoubleClick { get; set; }
+
+        T SelectedItem;
+
+        /// <summary>
+        /// add active class for the row of the selected item 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        string SetSelected(T item)
+        {
+            if (SelectedItem is not null)
+            {
+                return SelectedItem.Equals(item) ? string.IsNullOrEmpty(RowCssSelected) ? "is-selected" : RowCssSelected : string.Empty;
+            }
+            else return string.Empty;
+        }
+
+        async ValueTask Row_Click(T item)
+        {
+            SelectedItem = item;
+            if (OnClick.HasDelegate) await OnClick.InvokeAsync(SelectedItem);
+        }
+
+        async ValueTask Row_DoubleClick(T item)
+        {
+            SelectedItem = item;
+            if (OnDoubleClick.HasDelegate) await OnDoubleClick.InvokeAsync(item);
+        }
+        #endregion
+
+        #region helpers
+        MarkupString DefaultHead;
+        MarkupString DefaultBody;
+        private const string DefaultCSSClass = "table is-bordered is-striped is-hoverable is-fullwidth";
+
+        void DefaultView()
+        {
+            if (Paged is not null)
             {
                 if (AdditionalAttributes == null)
                 {
@@ -112,7 +172,7 @@ namespace ClassLibrary.Containers
                 {
                     html = new StringBuilder();
                     //get all the item to show the values
-                    foreach (T item in Items)
+                    foreach (T item in Paged)
                     {
                         html.Append("<tr>");
                         //show the values
@@ -128,7 +188,7 @@ namespace ClassLibrary.Containers
                     DefaultBody = new MarkupString(html.ToString());
                 }
             }
-            else return;
         }
+        #endregion
     }
 }

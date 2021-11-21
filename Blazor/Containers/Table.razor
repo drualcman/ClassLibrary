@@ -1,11 +1,25 @@
 ﻿@typeparam T
-@if (Items != null)
+@if (Paged is not null)
 {
     <div class="table-container">
         <table @attributes="AdditionalAttributes">
+            <caption>
+                <div class="columns">
+                    <div class="column">
+                        <select @bind="PageSize" class="@SelectCss">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="40">40</option>
+                            <option value="80">80</option>
+                            <option value="160">160</option>
+                        </select>
+                    </div>
+                </div>
+            </caption>
             <thead>
                 <tr>
-                    @if (Head != null)
+                    @if (Head is not null)
                     {
                         @Head
                     }
@@ -16,15 +30,20 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Items.Count() == 0)
+                @if (Paged.TotalCount == 0)
                 {
-                    @Empty
-                }
-                else @if (Body != null)
-                {
-                    foreach (T item in Items)
+                    if (Empty is not null)
                     {
                         <tr>
+                            @Empty
+                        </tr>
+                    }
+                }
+                else @if (Body is not null)
+                {
+                    foreach (T item in Paged)
+                    {
+                        <tr class="@RowCss @(SetSelected(item))" @onclick="async () => await Row_Click(item)" @ondblclick="async () => await Row_DoubleClick(item)">
                             @this.Body(item)
                         </tr>
                     }
@@ -34,8 +53,36 @@
                     @DefaultBody
                 }
             </tbody>
-            <tbody>
-            </tbody>
+            <tfoot>
+                @if (Paged.TotalCount > 0)
+                {
+                    <tr>
+                        <PaginationFooter OnChange="ToPage"
+                            CurrentPage="Paged.CurrentPage"
+                            ElementCss="button"
+                            TotalPages="Paged.TotalPages" />
+                    </tr>
+                }
+            </tfoot>
         </table>
     </div>
+}
+else
+{
+   if (Loading is not null)
+   {
+        @Loading
+    }
+    else
+    {
+        <div class="loading">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+    }
+
 }
