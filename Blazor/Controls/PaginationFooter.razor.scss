@@ -11,15 +11,15 @@
             cursor: pointer;
             margin-right: -1px;
 
+            &:hover {
+                background: #eee;
+                border-color: #eee;
+            }
+
             &.active {
                 background: #106FFF;
                 border-color: #106FFF;
                 color: #fff;
-            }
-
-            &:hover {
-                background: #eee;
-                border-color: #eee;
             }
 
             &:first-child {
