@@ -58,12 +58,7 @@ namespace ClassLibrary.Containers
         #region initializing
         protected override async Task OnParametersSetAsync()
         {
-            if (Loader is not null && Items is null)
-            {
-                Items = await Loader();
-                await ToPage(1);
-                DefaultView();
-            }
+            await LoadItems();
         }
 
         protected override void OnParametersSet()
@@ -120,6 +115,18 @@ namespace ClassLibrary.Containers
         {
             SelectedItem = item;
             if (OnDoubleClick.HasDelegate) await OnDoubleClick.InvokeAsync(item);
+        }
+        #endregion
+
+        #region Methods
+        async Task LoadItems()
+        {
+            if (Loader is not null && Items is null)
+            {
+                Items = await Loader();
+                await ToPage(1);
+                DefaultView();
+            }
         }
         #endregion
 
