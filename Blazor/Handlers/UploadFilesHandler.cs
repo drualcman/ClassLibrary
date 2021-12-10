@@ -1,7 +1,8 @@
 ﻿using BlazorInputFileExtended;
 using BlazorInputFileExtended.Helpers;
 using ClassLibrary.Extensions;
-using ClassLibrary.Service;
+using ClassLibrary.Helpers;
+using ClassLibrary.Services;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using System;

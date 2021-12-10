@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.JSInterop;
 
-namespace ClassLibrary.Service
+namespace ClassLibrary.Services
 {
     /// <summary>
     /// Service interface for our DefaultServices service
@@ -14,5 +14,5 @@ namespace ClassLibrary.Service
         public NavigationManager Navigation { get; }
         public IJSRuntime JsRuntime { get; }
         public IAccessTokenProvider AccessTokenProvider { get; }
-    }    
+    }
 }

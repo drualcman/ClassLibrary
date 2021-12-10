@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using System.Net.Http;
 
-namespace ClassLibrary.Service
+namespace ClassLibrary.Services
 {
     public class DefaultServices : IDefaultServices
     {
@@ -14,8 +14,8 @@ namespace ClassLibrary.Service
             IJSRuntime js)
         {
             this.Client = Client;
-            this.Navigation = nav;
-            this.JsRuntime = js;
+            Navigation = nav;
+            JsRuntime = js;
         }
 
         public DefaultServices(HttpClient Client,
@@ -24,9 +24,9 @@ namespace ClassLibrary.Service
             IAccessTokenProvider accessTokenProvider)
         {
             this.Client = Client;
-            this.Navigation = nav;
-            this.JsRuntime = js;
-            this.AccessTokenProvider = accessTokenProvider;
+            Navigation = nav;
+            JsRuntime = js;
+            AccessTokenProvider = accessTokenProvider;
         }
 
         public HttpClient Client { get; }

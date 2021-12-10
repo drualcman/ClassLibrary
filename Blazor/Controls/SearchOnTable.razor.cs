@@ -1,4 +1,4 @@
-﻿using ClassLibrary.Service;
+﻿using ClassLibrary.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
