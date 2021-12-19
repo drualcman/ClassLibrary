@@ -23,18 +23,26 @@ namespace ClassLibrary.Containers
         [Parameter]
         public RenderFragment<TItem> Body { get; set; }
         
+        /// <summary>
+        /// Content when no items
+        /// </summary>
         [Parameter]
         public RenderFragment Empty { get; set; }
 
         [Parameter]
         public string ButtonsContainerCss { get; set; }
 
+        /// <summary>
+        /// Content for the left button
+        /// </summary>
         [Parameter]
         public RenderFragment Left { get; set; }
 
         [Parameter]
         public string LeftContainerCss { get; set; }
-
+        /// <summary>
+        /// Content for the right button
+        /// </summary>
         [Parameter]
         public RenderFragment Right { get; set; }
 
