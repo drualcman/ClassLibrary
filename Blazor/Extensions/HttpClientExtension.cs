@@ -90,5 +90,22 @@ namespace ClassLibrary.Extensions
         }
         #endregion
 
+        #region delete
+        public static async Task<HttpResponseMessage> DeleteAuthAsync(this HttpClient httpClient, string token, string requestUri)
+        {
+            //set the token for the authentication            
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            HttpResponseMessage response = await httpClient.DeleteAsync(requestUri);
+            return response;
+        }
+        public static async Task<TValue> DeleteAuthAsync<TValue>(this HttpClient httpClient, string token, string requestUri)
+        {
+            //set the token for the authentication            
+            HttpResponseMessage response = await DeleteAuthAsync(httpClient, token, requestUri);
+            TValue result = await response.Content.ReadFromJsonAsync<TValue>();
+            return result;
+        }
+        #endregion
+
     }
 }

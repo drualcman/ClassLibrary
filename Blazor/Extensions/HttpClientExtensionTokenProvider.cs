@@ -95,5 +95,19 @@ namespace ClassLibrary.Extensions
             return await httpClient.PutAuthAsync(token, requestUri, value);
         }
         #endregion
+
+
+        #region delete
+        public static async Task<HttpResponseMessage> DeleteAuthAsync(this HttpClient httpClient, IAccessTokenProvider accessTokenProvider, string requestUri)
+        {
+            string token = await GetTocken(accessTokenProvider);
+            return await httpClient.DeleteAuthAsync(token, requestUri);
+        }
+        public static async Task<TValue> DeleteAuthAsync<TValue>(this HttpClient httpClient, IAccessTokenProvider accessTokenProvider, string requestUri)
+        {
+            string token = await GetTocken(accessTokenProvider);
+            return await httpClient.DeleteAuthAsync<TValue>(token, requestUri);
+        }
+        #endregion
     }
 }

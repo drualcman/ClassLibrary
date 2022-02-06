@@ -80,5 +80,18 @@ namespace ClassLibrary.Extensions
         }
         #endregion
 
+
+        #region delete
+        public static async Task<HttpResponseMessage> DeleteAuthAsync(this HttpClient httpClient, IJSRuntime jsRuntime, string requestUri)
+        {
+            string token = await jsRuntime.GetUserTokenAsync();
+            return await httpClient.DeleteAuthAsync(token, requestUri);
+        }
+        public static async Task<TValue> DeleteAuthAsync<TValue>(this HttpClient httpClient, IJSRuntime jsRuntime, string requestUri)
+        {
+            string token = await jsRuntime.GetUserTokenAsync();
+            return await httpClient.DeleteAuthAsync<TValue>(token, requestUri);
+        }
+        #endregion
     }
 }
