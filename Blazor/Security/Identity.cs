@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Microsoft.JSInterop;
 using System.Text.Json;
 using ClassLibrary.Javascript;
-using ClassLibrary.Attributes;
+using ClassLibrary.Helpers;
 
 namespace ClassLibrary.Security
 {
@@ -210,7 +210,8 @@ namespace ClassLibrary.Security
                 string key = token.Split('.')[2];
                 Cipher.Secret e = new Cipher.Secret(key);
                 string jsonString = await e.DecriptAsync(data);
-                return JsonSerializer.Deserialize<TUser>(jsonString);
+                JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true, Converters = { new CustomJsonStringEnumConverter() } };
+                return JsonSerializer.Deserialize<TUser>(jsonString, options);
             }
         }
 

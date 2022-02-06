@@ -14,7 +14,7 @@ namespace ClassLibrary.Helpers
         /// <returns></returns>
         public static MarkupString ToHtml(this string content)
         {
-            string addBr = content.Replace(Environment.NewLine, "<br/>").Replace("\n\r", "<br/>");
+            string addBr = content.Replace(Environment.NewLine, "<BR />").Replace("\n\r", "<BR />");
             MarkupString result = new MarkupString(addBr);
             return result;
         }
@@ -44,9 +44,7 @@ namespace ClassLibrary.Helpers
                     content = content.Replace(code[i], replace[i]);
                 }
             }
-            string addBr = content.Replace(Environment.NewLine, "<br/>").Replace("\n\r", "<br/>");
-            MarkupString result = new MarkupString(addBr);
-            return result;
+            return ToHtml(content);
         }
 
         /// <summary>
