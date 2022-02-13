@@ -13,7 +13,14 @@ namespace ClassLibrary.Extensions
         public static string GetQueryString(this NavigationManager navManager, string key)
         {
             Uri uri = navManager.ToAbsoluteUri(navManager.Uri);
-            return QueryHelpers.ParseNullableQuery(uri.Query)[key];
+            try
+            {
+                return QueryHelpers.ParseNullableQuery(uri.Query)[key];
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }
