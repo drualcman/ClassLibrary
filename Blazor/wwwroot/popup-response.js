@@ -6,12 +6,21 @@
      * @param {number} time time limit to show
      * @param {string} additional additional data
      */
+    window.PopupResponse = (message, status, time, additional) => window.PopupResponseMessage(message, status, time, additional),
+    /**
+     * Show popup message on the bottom right on the screen (No dependencies)
+     * @param {string} message message shows on popup
+     * @param {boolean} status status of popup
+     * @param {number} time time limit to show
+     * @param {string} additional additional data
+     */
     window.PopupResponseMessage = (message, status, time, additional) => {
         if (!message) return false; // No need to run
 
         status = status ?? true;
         time = ((time ?? 5) * 1000);
-        additional = additional ?? undefined;
+        additional = additional ?? '';
+        message += additional;
 
         let isContainerExist = true;
         let container = document.querySelector('.popup-response-wp'); 
