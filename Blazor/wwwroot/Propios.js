@@ -190,8 +190,16 @@
             if (es_safari) retorno = 'Safari';
             var es_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
             if (es_chrome) retorno = 'Chrome';
+            else {
+                es_chrome = navigator.userAgent.toLowerCase().indexOf('crios') > -1;
+                if (es_chrome) retorno = 'Chrome';
+            }
             var es_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
             if (es_firefox) retorno = 'Firefox';
+            else {
+                es_firefox = navigator.userAgent.toLowerCase().indexOf('fxios') > -1;
+                if (es_firefox) retorno = 'Firefox';
+            }
             var es_opera = navigator.userAgent.toLowerCase().indexOf('opera') > -1;
             if (es_opera) retorno = 'Opera';
             var es_ie = navigator.userAgent.toLowerCase().indexOf('msie') > -1;
@@ -200,6 +208,11 @@
             if (es_edge) retorno = 'Edge';
             var es_trident = navigator.userAgent.toLowerCase().indexOf('trident') > -1;
             if (es_trident) retorno = 'Trident';
+            //var chrome_firefox_Ios = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+            //    navigator.userAgent &&
+            //    navigator.userAgent.indexOf('CriOS') == -1 &&
+            //    navigator.userAgent.indexOf('FxiOS') == -1;
+            //if (chrome_firefox_Ios) retorno = 'ChromeFirefoxIOS';
             if (retorno === '') retorno = navigator.userAgent;
 
             return { Explorer: retorno, MSIE: es_ie, Firefox: es_firefox, Chrome: es_chrome, Opera: es_opera, Safari: es_safari, Edge: es_edge, Trident: es_trident };
