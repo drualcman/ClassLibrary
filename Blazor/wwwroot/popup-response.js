@@ -16,6 +16,20 @@
      */
     window.PopupResponseMessage = (message, status, time, additional) => {
         if (!message) return false; // No need to run
+        else {
+            if (typeof (message) !== typeof ('')) {
+                let msg = '';
+                try {
+                    message.forEach(function (notif) {
+                        msg += notif.message
+                    });
+                } catch (e) {
+                    console.warn(e);
+                    msg = '';
+                }
+                message = msg;
+            }
+        }
 
         status = status ?? true;
         time = ((time ?? 5) * 1000);
@@ -38,10 +52,22 @@
         }
         else items = container.querySelector('.items');
 
+        let alertIconCSS;
+        let alertIcon;
+        if (status) {
+            alertIconCSS = 'is-success';
+            alertIcon = '<i id="icon" class="fas fa-check-circle" style="font-size: 2em; margin-right: 0.75em;"></i>';
+        }
+        else {
+            alertIconCSS = 'is-danger';
+            alertIcon = '<i id="icon" class="fas fa-exclamation-circle" style="font-size: 2em; margin-right: 0.75em;"></i>';
+        }        
+
         let item = document.createElement('div');
-        item.className = `item ${status ? 'is-success' : 'is-danger'}`;
+        item.className = `item ${alertIconCSS}`;
         item.innerHTML = `<div class="close-btn"><i class="fas fa-times"></i></div>
                           <div class="content">
+                              ${alertIcon}
                               ${message}
                           </div>`;
 
@@ -51,7 +77,7 @@
         });
 
         if (!isContainerExist) document.body.appendChild(container);
-
+        console.log(Close, time, item);
         setTimeout(Close, time, item);
 
         function Close(item) {
