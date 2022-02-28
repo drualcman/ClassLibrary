@@ -77,7 +77,6 @@
         });
 
         if (!isContainerExist) document.body.appendChild(container);
-        console.log(Close, time, item);
         setTimeout(Close, time, item);
 
         function Close(item) {
