@@ -1,7 +1,6 @@
 ﻿using BlazorInputFileExtended;
 using BlazorInputFileExtended.Helpers;
 using ClassLibrary.Extensions;
-using ClassLibrary.Helpers;
 using ClassLibrary.Services;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
@@ -27,7 +26,7 @@ namespace ClassLibrary.Handlers
         /// <param name="jSRuntime"></param>
         /// <param name="maxFiles">Maximum files allowed to upload</param>
         /// <param name="maxSize">Maximum file size to upload</param>
-        public UploadFilesHandler(IDefaultServices services = null, HttpClient httpClient = null, IJSRuntime jSRuntime = null, int maxFiles = 5, long maxSize = 512000) : 
+        public UploadFilesHandler(IDefaultServices services = null, HttpClient httpClient = null, IJSRuntime jSRuntime = null, int maxFiles = 5, long maxSize = 512000) :
             base(httpClient, maxFiles, maxSize)
         {
             if (services is not null)
@@ -309,7 +308,7 @@ namespace ClassLibrary.Handlers
             }
             else
             {
-                OnUploadErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"No files to upload", "UploadImageAsync"));            
+                OnUploadErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"No files to upload", "UploadImageAsync"));
             }
             return await UploadFilesAuthAsync<TModel>(urlEndPoint, content, ignoreFiles, field);
         }

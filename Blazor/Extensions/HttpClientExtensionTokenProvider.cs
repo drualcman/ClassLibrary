@@ -1,14 +1,6 @@
-﻿using ClassLibrary.Javascript;
-using ClassLibrary.Security;
-using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 namespace ClassLibrary.Extensions
 {

@@ -1,7 +1,7 @@
-﻿using System.Net.Http;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.JSInterop;
+using System.Net.Http;
 
 namespace ClassLibrary.Services
 {

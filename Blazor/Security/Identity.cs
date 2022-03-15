@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using ClassLibrary.Helpers;
+using ClassLibrary.Javascript;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Collections.Generic;
 using Microsoft.JSInterop;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Security.Claims;
 using System.Text.Json;
-using ClassLibrary.Javascript;
-using ClassLibrary.Helpers;
+using System.Threading.Tasks;
 
 namespace ClassLibrary.Security
 {
@@ -200,7 +200,7 @@ namespace ClassLibrary.Security
         /// <typeparam name="TUser"></typeparam>
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
-        public static async Task<TUser> GetUserAsync<TUser>(IJSRuntime jsRuntime) where TUser: new ()
+        public static async Task<TUser> GetUserAsync<TUser>(IJSRuntime jsRuntime) where TUser : new()
         {
             string data = await jsRuntime.GetUserDataAsync();
             if (string.IsNullOrEmpty(data)) return new TUser();
@@ -234,7 +234,7 @@ namespace ClassLibrary.Security
         /// <param name="context"></param>
         /// <param name="authenticationType">Set what authentication will used</param>
         /// <returns></returns>
-        public static async Task<TUser> GetUserAsync<TUser>(HttpContext context, string authenticationType) where TUser: new()
+        public static async Task<TUser> GetUserAsync<TUser>(HttpContext context, string authenticationType) where TUser : new()
         {
             try
             {
@@ -246,11 +246,11 @@ namespace ClassLibrary.Security
                     Type myType = typeof(TUser);
                     string model = $"{myType.Namespace}.{myType.Name}";
                     //Type t = Assembly.GetExecutingAssembly().GetType(model, true, true);
-                    
+
                     //Get assemblies loaded in the current AppDomain
                     Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-                    int c = 0;                    
+                    int c = 0;
                     do
                     {
                         if (assemblies[c].GetName().Name == myType.Namespace)
@@ -272,7 +272,7 @@ namespace ClassLibrary.Security
                         c++;
                     } while (c < assemblies.Length);
 
-                    
+
                 }
                 return User;
             }
@@ -366,7 +366,7 @@ namespace ClassLibrary.Security
             {
                 i = 0;
                 do
-                { 
+                {
                     //get property name
                     string myType = properties[i].Name;
                     //get value of the property
@@ -402,7 +402,7 @@ namespace ClassLibrary.Security
         /// <returns></returns>
         public static ClaimsIdentity SetUserData<TUser>(TUser user, string authenticationType, string displayName)
         {
-            List<Claim> claims = SetClaims(displayName, user);           
+            List<Claim> claims = SetClaims(displayName, user);
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, authenticationType);
             return claimsIdentity;
         }
@@ -413,7 +413,7 @@ namespace ClassLibrary.Security
         {
             long i = 1;
             foreach (byte b in Guid.NewGuid().ToByteArray()) i *= ((int)b + 1);
-             Cipher.Hash.MD5 md5 = new Cipher.Hash.MD5();
+            Cipher.Hash.MD5 md5 = new Cipher.Hash.MD5();
             return md5.ComputeHash(string.Format("{0:x}", i - DateTime.Now.Ticks));
         }
         #endregion

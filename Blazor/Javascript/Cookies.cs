@@ -1,7 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ClassLibrary.Javascript
@@ -17,7 +14,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="name">name of the cookie</param>
         /// <returns></returns>
-        public static ValueTask<string> CookiesGetAsync(this IJSRuntime jsRuntume, string name) 
+        public static ValueTask<string> CookiesGetAsync(this IJSRuntime jsRuntume, string name)
             => jsRuntume.InvokeAsync<string>("Cookies.Get"                //function to execute from C# interop
                                         , name);
 

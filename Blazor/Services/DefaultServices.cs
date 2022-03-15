@@ -1,7 +1,5 @@
-﻿using ClassLibrary.Logger;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using System.Net.Http;
 

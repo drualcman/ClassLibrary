@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,7 +21,7 @@ namespace ClassLibrary.Containers
 
         [Parameter]
         public RenderFragment<TItem> Body { get; set; }
-        
+
         /// <summary>
         /// Content when no items
         /// </summary>
@@ -61,7 +60,7 @@ namespace ClassLibrary.Containers
                     Order = order
                 });
                 order++;
-            }            
+            }
         }
 
         List<Item> ItemsList;

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary.Logger
 {
-    public class WebSericeLogLogger:ILogger
+    public class WebSericeLogLogger : ILogger
     {
         protected readonly WebSericeLogProvider ServiceProvider;
 
@@ -38,7 +37,8 @@ namespace ClassLibrary.Logger
             };
             string dataToSend = JsonSerializer.Serialize<Log>(log);
             StringContent content = new StringContent(dataToSend, Encoding.UTF8, "application/json");
-            Task.Run(async delegate {
+            Task.Run(async delegate
+            {
                 HttpResponseMessage response = await ServiceProvider.Client.PostAsync("log/save", content);
             });
         }

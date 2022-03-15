@@ -1,7 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -18,7 +15,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="key">name of the variable in the LocalStorage</param>
         /// <returns></returns>
-        public static async ValueTask<string> LocalStorageGetAsync(this IJSRuntime jsRuntume, string key) 
+        public static async ValueTask<string> LocalStorageGetAsync(this IJSRuntime jsRuntume, string key)
             => await jsRuntume.InvokeAsync<string>("MyLocalStorage.Get", key);
 
         /// <summary>
@@ -28,10 +25,10 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static async ValueTask<TModel> LocalStorageGetAsync<TModel>(this IJSRuntime jsRuntume, string key) 
+        public static async ValueTask<TModel> LocalStorageGetAsync<TModel>(this IJSRuntime jsRuntume, string key)
         {
             string data = await LocalStorageGetAsync(jsRuntume, key);
-            return JsonSerializer.Deserialize<TModel>(data);            
+            return JsonSerializer.Deserialize<TModel>(data);
         }
 
         /// <summary>

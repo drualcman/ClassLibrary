@@ -50,8 +50,8 @@ namespace ClassLibrary.Javascript
         /// <param name="message">message to show</param>
         /// <param name="timeout">timeout in seconds to out hide. 0 never hide</param>
         /// <returns></returns>
-        public static async void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type, 
-            string target, string title, string message, int timeout) 
+        public static async void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+            string target, string title, string message, int timeout)
         {
             switch (type)
             {
@@ -123,7 +123,7 @@ namespace ClassLibrary.Javascript
         /// <param name="message">message to show</param>
         /// <returns></returns>
         public static void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
-            string target, string message)=>
+            string target, string message) =>
             BootstrapMessageAsync(jsRuntume, type, target, "", message);
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace ClassLibrary.Javascript
         /// <param name="title">title for the message</param>
         /// <param name="message">message to show</param>
         /// <returns></returns>
-        public static  void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
+        public static void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string title, string message) =>
             BootstrapMessageAsync(jsRuntume, type, target, title, message, 0);
 
@@ -263,7 +263,7 @@ namespace ClassLibrary.Javascript
         /// <returns></returns>
         public static void PopupResponseAsync(this IJSRuntime jsRuntume, string message, bool status)
         {
-             PopupResponseAsync(jsRuntume, message, status, null, null);
+            PopupResponseAsync(jsRuntume, message, status, null, null);
         }
 
         /// <summary>

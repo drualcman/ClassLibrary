@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System;
-using System.Threading.Tasks;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace ClassLibrary.Javascript
 {
@@ -103,7 +103,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntime"></param>
         /// <returns></returns>
         public static Task DelUserTokenAsync(this IJSRuntime jsRuntime)
-        { 
+        {
             jsRuntime.LocalStorageDelAsync("token");
             return Task.CompletedTask;
         }

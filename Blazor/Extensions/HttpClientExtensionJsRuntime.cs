@@ -1,22 +1,16 @@
 ﻿using ClassLibrary.Javascript;
-using ClassLibrary.Security;
 using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace ClassLibrary.Extensions 
+namespace ClassLibrary.Extensions
 {
     public static partial class HttpClientJsonExtensions
     {
         public static async Task<HttpResponseMessage> SendAuthAsync(this HttpClient httpClient, IJSRuntime jsRuntime, HttpMethod method, string requestUri, HttpContent value = null)
         {
             string token = await jsRuntime.GetUserTokenAsync();
-            return await httpClient.SendAuthAsync(token, method, requestUri,value);
+            return await httpClient.SendAuthAsync(token, method, requestUri, value);
         }
 
         public static async Task<HttpResponseMessage> GetAuthAsync(this HttpClient httpClient, string requestUri, IJSRuntime jsRuntime)

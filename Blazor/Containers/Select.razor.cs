@@ -2,14 +2,13 @@
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 
 namespace ClassLibrary.Containers
 {
-    public partial class Select<T>: ComponentBase
+    public partial class Select<T> : ComponentBase
     {
         [Parameter]
         public string DefaultOptionText { get; set; }
@@ -18,9 +17,9 @@ namespace ClassLibrary.Containers
         public IEnumerable<T> Items { get; set; }
 
         [Parameter]
-        public string DataField { get; set; }        
+        public string DataField { get; set; }
 
-        [Parameter(CaptureUnmatchedValues =true)]
+        [Parameter(CaptureUnmatchedValues = true)]
         public Dictionary<string, object> AdditionalAttributes { get; set; }
 
         [Parameter]

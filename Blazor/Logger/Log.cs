@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClassLibrary.Logger
+﻿namespace ClassLibrary.Logger
 {
     public class Log
     {

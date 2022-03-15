@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ClassLibrary.Helpers
@@ -25,8 +24,8 @@ namespace ClassLibrary.Helpers
         /// <param name="content"></param>
         /// <returns></returns>
         public static MarkupString ToHtml(this string content, string code, string replace)
-        {            
-            return ToHtml(content, new string[] { code}, new string[] { replace});
+        {
+            return ToHtml(content, new string[] { code }, new string[] { replace });
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace ClassLibrary.Helpers
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string StripHTML(this string content) => 
+        public static string StripHTML(this string content) =>
             Regex.Replace(content, "<.*?>", string.Empty).Replace("&nbsp;", " ");
     }
 }

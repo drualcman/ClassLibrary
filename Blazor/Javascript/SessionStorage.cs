@@ -1,7 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -18,7 +15,7 @@ namespace ClassLibrary.Javascript
         /// <param name="jsRuntume"></param>
         /// <param name="key">name of the variable in the LocalStorage</param>
         /// <returns></returns>
-        public static async ValueTask<string> SessionStorageGetAsync(this IJSRuntime jsRuntume, string key) => 
+        public static async ValueTask<string> SessionStorageGetAsync(this IJSRuntime jsRuntume, string key) =>
             await jsRuntume.InvokeAsync<string>("MySessionStorage.Get", key);
 
         /// <summary>
@@ -54,7 +51,7 @@ namespace ClassLibrary.Javascript
         /// <param name="key">name of the variable in the LocalStorage</param>
         /// <param name="value">object with the data to store</param>
         /// <returns></returns>
-        public static async void SessionStorageSetAsync(this IJSRuntime jsRuntume, string key, string value) => 
+        public static async void SessionStorageSetAsync(this IJSRuntime jsRuntume, string key, string value) =>
             await jsRuntume.InvokeVoidAsync("MySessionStorage.Set", key, value);
 
         /// <summary>

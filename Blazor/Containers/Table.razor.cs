@@ -29,7 +29,7 @@ namespace ClassLibrary.Containers
         [Parameter] public RenderFragment Head { get; set; }
         [Parameter] public RenderFragment<T> Body { get; set; }
         [Parameter] public RenderFragment Loading { get; set; }
-        [Parameter]  public RenderFragment Empty { get; set; }
+        [Parameter] public RenderFragment Empty { get; set; }
         /// <summary>
         /// Only one with this property
         /// </summary>
@@ -44,7 +44,8 @@ namespace ClassLibrary.Containers
         public int PageSize
         {
             get { return PageSizeBK; }
-            set {
+            set
+            {
                 PageSizeBK = value;
                 if (Paged is not null) Paged = PagedList<T>.ToPagedList(Items, 1, PageSizeBK);
             }
@@ -64,7 +65,7 @@ namespace ClassLibrary.Containers
         protected override void OnParametersSet()
         {
             if (Items is not null)
-            {                
+            {
                 ToPage(1);
                 DefaultView();
             }
@@ -83,11 +84,11 @@ namespace ClassLibrary.Containers
         /// <summary>
         /// Update the selecteditem for the parent component get the change
         /// </summary>
-        [Parameter]  public EventCallback<T> OnClick { get; set; }
+        [Parameter] public EventCallback<T> OnClick { get; set; }
         /// <summary>
         /// Invoke a method to use the selected item
         /// </summary>
-        [Parameter]  public EventCallback<T> OnDoubleClick { get; set; }
+        [Parameter] public EventCallback<T> OnDoubleClick { get; set; }
 
         T SelectedItem;
 
