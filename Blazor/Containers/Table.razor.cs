@@ -1,6 +1,7 @@
 ﻿using ClassLibrary.Attributes;
 using ClassLibrary.Controls.PaginationLists;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -47,7 +48,7 @@ namespace ClassLibrary.Containers
             set
             {
                 PageSizeBK = value;
-                if (Paged is not null) Paged = PagedList<T>.ToPagedList(Items, 1, PageSizeBK);
+                if (Paged is not null) Paged = PagedList<T>.ToPagedList(Items, Paged.CurrentPage, PageSizeBK);
             }
         }
 
@@ -64,10 +65,26 @@ namespace ClassLibrary.Containers
 
         protected override void OnParametersSet()
         {
+            Console.WriteLine("1");
             if (Items is not null)
             {
-                ToPage(1);
+                ToPage(Paged?.CurrentPage ?? 1);
                 DefaultView();
+            }
+        }
+
+        [Inject]
+        public IJSRuntime JS { get; set; }
+
+        string TableId = Guid.NewGuid().ToString();
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(firstRender)
+            {
+                IJSObjectReference js = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/ClassLibrary/PaginationFooter.js");
+                await js.InvokeVoidAsync("PaginationFooter.FitPaginationColSpam", TableId);
+                await js.DisposeAsync();
             }
         }
         #endregion
@@ -125,7 +142,7 @@ namespace ClassLibrary.Containers
             if (Loader is not null && Items is null)
             {
                 Items = await Loader();
-                await ToPage(1);
+                await ToPage(Paged?.CurrentPage ?? 1);
                 DefaultView();
             }
         }

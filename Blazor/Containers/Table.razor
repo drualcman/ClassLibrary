@@ -2,7 +2,7 @@
 @if (Paged is not null)
 {
     <div class="table-container">
-        <table @attributes="AdditionalAttributes">
+        <table @attributes="AdditionalAttributes" id="@TableId">
             <caption>
                 <div class="columns">
                     <div class="column">
@@ -57,10 +57,12 @@
                 @if (Paged.TotalCount > 0)
                 {
                     <tr>
-                        <PaginationFooter OnChange="ToPage"
-                            CurrentPage="Paged.CurrentPage"
-                            ElementCss="button"
-                            TotalPages="Paged.TotalPages" />
+                        <td>
+                            <PaginationFooter OnChange="ToPage"
+                                CurrentPage="Paged.CurrentPage"
+                                ElementCss="button"
+                                TotalPages="Paged.TotalPages" />
+                        </td>
                     </tr>
                 }
             </tfoot>
