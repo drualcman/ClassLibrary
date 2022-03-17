@@ -203,15 +203,22 @@ namespace ClassLibrary.Security
         public static async Task<TUser> GetUserAsync<TUser>(IJSRuntime jsRuntime) where TUser : new()
         {
             string data = await jsRuntime.GetUserDataAsync();
-            if (string.IsNullOrEmpty(data)) return new TUser();
+            if(string.IsNullOrEmpty(data)) return new TUser();
             else
             {
-                string token = await jsRuntime.GetUserTokenAsync();
-                string key = token.Split('.')[2];
-                Cipher.Secret e = new Cipher.Secret(key);
-                string jsonString = await e.DecriptAsync(data);
-                JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true, Converters = { new CustomJsonStringEnumConverter() } };
-                return JsonSerializer.Deserialize<TUser>(jsonString, options);
+                try
+                {
+                    string token = await jsRuntime.GetUserTokenAsync();
+                    string key = token.Split('.')[2];
+                    Cipher.Secret e = new Cipher.Secret(key);
+                    string jsonString = await e.DecriptAsync(data);
+                    JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true, Converters = { new CustomJsonStringEnumConverter() } };
+                    return JsonSerializer.Deserialize<TUser>(jsonString, options);
+                }
+                catch
+                {
+                    return new TUser();
+                }
             }
         }
 
