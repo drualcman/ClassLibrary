@@ -48,7 +48,7 @@ namespace ClassLibrary.Containers
             set
             {
                 PageSizeBK = value;
-                if (Paged is not null) Paged = PagedList<T>.ToPagedList(Items, Paged.CurrentPage, PageSizeBK);
+                if(Paged is not null) Paged = PagedList<T>.ToPagedList(Items, Paged.CurrentPage, PageSizeBK);
             }
         }
 
@@ -66,7 +66,7 @@ namespace ClassLibrary.Containers
         protected override void OnParametersSet()
         {
             Console.WriteLine("1");
-            if (Items is not null)
+            if(Items is not null)
             {
                 ToPage(Paged?.CurrentPage ?? 1);
                 DefaultView();
@@ -80,12 +80,11 @@ namespace ClassLibrary.Containers
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if(firstRender)
-            {
-                IJSObjectReference js = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/ClassLibrary/PaginationFooter.js");
-                await js.InvokeVoidAsync("PaginationFooter.FitPaginationColSpam", TableId);
-                await js.DisposeAsync();
-            }
+
+            IJSObjectReference js = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/ClassLibrary/PaginationFooter.js");
+            await js.InvokeVoidAsync("PaginationFooter.FitPaginationColSpam", TableId);
+            await js.DisposeAsync();
+
         }
         #endregion
 
@@ -116,7 +115,7 @@ namespace ClassLibrary.Containers
         /// <returns></returns>
         string SetSelected(T item)
         {
-            if (SelectedItem is not null)
+            if(SelectedItem is not null)
             {
                 return SelectedItem.Equals(item) ? string.IsNullOrEmpty(RowCssSelected) ? "is-selected" : RowCssSelected : string.Empty;
             }
@@ -126,20 +125,20 @@ namespace ClassLibrary.Containers
         async ValueTask Row_Click(T item)
         {
             SelectedItem = item;
-            if (OnClick.HasDelegate) await OnClick.InvokeAsync(SelectedItem);
+            if(OnClick.HasDelegate) await OnClick.InvokeAsync(SelectedItem);
         }
 
         async ValueTask Row_DoubleClick(T item)
         {
             SelectedItem = item;
-            if (OnDoubleClick.HasDelegate) await OnDoubleClick.InvokeAsync(item);
+            if(OnDoubleClick.HasDelegate) await OnDoubleClick.InvokeAsync(item);
         }
         #endregion
 
         #region Methods
         async Task LoadItems()
         {
-            if (Loader is not null && Items is null)
+            if(Loader is not null && Items is null)
             {
                 Items = await Loader();
                 await ToPage(Paged?.CurrentPage ?? 1);
@@ -155,17 +154,17 @@ namespace ClassLibrary.Containers
 
         void DefaultView()
         {
-            if (Paged is not null)
+            if(Paged is not null)
             {
-                if (AdditionalAttributes == null)
+                if(AdditionalAttributes == null)
                 {
                     AdditionalAttributes = new Dictionary<string, object>();
                 }
-                if (!AdditionalAttributes.ContainsKey("class"))
+                if(!AdditionalAttributes.ContainsKey("class"))
                 {
                     //check if have a table css class on the model send
                     DisplayTableAttribute cssClass = typeof(T).GetCustomAttribute<DisplayTableAttribute>();
-                    if (cssClass != null && cssClass.TableClass != null) AdditionalAttributes.Add("class", cssClass.TableClass);
+                    if(cssClass != null && cssClass.TableClass != null) AdditionalAttributes.Add("class", cssClass.TableClass);
                     else AdditionalAttributes.Add("class", DefaultCSSClass);
                 }
 
@@ -177,10 +176,10 @@ namespace ClassLibrary.Containers
                 DisplayTableAttribute[] attributes = new DisplayTableAttribute[properties.Length];
 
                 StringBuilder html;
-                if (Head == null)
+                if(Head == null)
                 {
                     html = new StringBuilder();
-                    for (int i = 0; i < properties.Length; i++)
+                    for(int i = 0; i < properties.Length; i++)
                     {
                         attributes[i] = properties[i].GetCustomAttribute<DisplayTableAttribute>();                  //get if my custom attributes
                                                                                                                     //custom header class
@@ -193,15 +192,15 @@ namespace ClassLibrary.Containers
                     }
                     DefaultHead = new MarkupString(html.ToString());
                 }
-                if (Body == null)
+                if(Body == null)
                 {
                     html = new StringBuilder();
                     //get all the item to show the values
-                    foreach (T item in Paged)
+                    foreach(T item in Paged)
                     {
                         html.Append("<tr>");
                         //show the values
-                        for (int i = 0; i < properties.Length; i++)
+                        for(int i = 0; i < properties.Length; i++)
                         {
                             attributes[i] = properties[i].GetCustomAttribute<DisplayTableAttribute>();                  //get if my custom attributes
                             string OpenTDTag = attributes[i] != null && attributes[i].ColClass != null ? $"<td class=\"{attributes[i].ColClass}\">" : "<td>";
