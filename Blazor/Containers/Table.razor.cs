@@ -32,6 +32,10 @@ namespace ClassLibrary.Containers
         [Parameter] public RenderFragment Loading { get; set; }
         [Parameter] public RenderFragment Empty { get; set; }
         /// <summary>
+        /// Put default value for page row count
+        /// </summary>
+        [Parameter] public int PageRowSize { get; set; }
+        /// <summary>
         /// Only one with this property
         /// </summary>
         [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
@@ -65,6 +69,7 @@ namespace ClassLibrary.Containers
 
         protected override void OnParametersSet()
         {
+            PageSize = PageRowSize;
             Console.WriteLine("1");
             if(Items is not null)
             {

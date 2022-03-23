@@ -7,12 +7,13 @@
                 <div class="columns">
                     <div class="column">
                         <select @bind="PageSize" class="@SelectCss">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="40">40</option>
-                            <option value="80">80</option>
-                            <option value="160">160</option>
+                            <option disabled>Select List Count</option>
+                            <option selected="@(PageSize == 5)" value="5">5</option>
+                            <option selected="@(PageSize == 10)" value="10">10</option>
+                            <option selected="@(PageSize == 20)" value="20">20</option>
+                            <option selected="@(PageSize == 40)" value="40">40</option>
+                            <option selected="@(PageSize == 80)" value="80">80</option>
+                            <option selected="@(PageSize == 160)" value="160">160</option>
                         </select>
                     </div>
                 </div>
