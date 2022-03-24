@@ -69,7 +69,7 @@ namespace ClassLibrary.Containers
 
         protected override void OnParametersSet()
         {
-            PageSize = PageRowSize;
+            PageSizeBK = PageRowSize > 0 ? PageRowSize : 10;
             Console.WriteLine("1");
             if(Items is not null)
             {
