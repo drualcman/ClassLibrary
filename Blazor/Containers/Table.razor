@@ -3,33 +3,36 @@
 {
     <div class="table-container">
         <table @attributes="AdditionalAttributes" id="@TableId">
-            <caption>
-                <div class="columns">
-                    <div class="column right-yt-warehouse">
-                        <select @bind="PageSize" class="@SelectCss">
-                            <option disabled>Select List Count</option>
-                            <option selected="@(PageSize == 5)" value="5">5</option>
-                            <option selected="@(PageSize == 10)" value="10">10</option>
-                            <option selected="@(PageSize == 20)" value="20">20</option>
-                            <option selected="@(PageSize == 40)" value="40">40</option>
-                            <option selected="@(PageSize == 80)" value="80">80</option>
-                            <option selected="@(PageSize == 160)" value="160">160</option>
-                        </select>
+            @if (Items is not null && Items.Any())
+            {
+                <caption>
+                    <div class="columns">
+                        <div class="column">
+                            <select @bind="PageSize" class="@SelectCss">
+                                <option disabled>Select List Count</option>
+                                <option selected="@(PageSize == 5)" value="5">5</option>
+                                <option selected="@(PageSize == 10)" value="10">10</option>
+                                <option selected="@(PageSize == 20)" value="20">20</option>
+                                <option selected="@(PageSize == 40)" value="40">40</option>
+                                <option selected="@(PageSize == 80)" value="80">80</option>
+                                <option selected="@(PageSize == 160)" value="160">160</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-            </caption>
-            <thead>
-                <tr>
-                    @if (Head is not null)
-                    {
-                        @Head
-                    }
-                    else
-                    {
-                        @DefaultHead
-                    }
-                </tr>
-            </thead>
+                </caption>
+                <thead>
+                    <tr>
+                        @if (Head is not null)
+                        {
+                            @Head
+                        }
+                        else
+                        {
+                            @DefaultHead
+                        }
+                    </tr>
+                </thead>
+            }
             <tbody>
                 @if (Paged.TotalCount == 0)
                 {
@@ -41,18 +44,18 @@
                     }
                 }
                 else @if (Body is not null)
-                {
-                    foreach (T item in Paged)
-                    {
-                        <tr class="@RowCss @(SetSelected(item))" @onclick="async () => await Row_Click(item)" @ondblclick="async () => await Row_DoubleClick(item)">
-                            @this.Body(item)
-                        </tr>
-                    }
-                }
-                else
-                {
-                    @DefaultBody
-                }
+           {
+               foreach (T item in Paged)
+               {
+                <tr class="@RowCss @(SetSelected(item))" @onclick="async () => await Row_Click(item)" @ondblclick="async () => await Row_DoubleClick(item)">
+                    @this.Body(item)
+                </tr>
+            }
+        }
+        else
+        {
+            @DefaultBody
+        }
             </tbody>
             <tfoot>
                 @if (Paged.TotalCount > 0)
@@ -60,9 +63,9 @@
                     <tr>
                         <td>
                             <PaginationFooter OnChange="ToPage"
-                                CurrentPage="Paged.CurrentPage"
-                                ElementCss="button"
-                                TotalPages="Paged.TotalPages" />
+                                              CurrentPage="Paged.CurrentPage"
+                                              ElementCss="button"
+                                              TotalPages="Paged.TotalPages" />
                         </td>
                     </tr>
                 }
@@ -72,19 +75,19 @@
 }
 else
 {
-   if (Loading is not null)
-   {
+    if (Loading is not null)
+    {
         @Loading
     }
     else
     {
         <div class="loading">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     }
 
