@@ -70,7 +70,6 @@ namespace ClassLibrary.Containers
         protected override void OnParametersSet()
         {
             PageSizeBK = PageRowSize > 0 ? PageRowSize : 10;
-            Console.WriteLine("1");
             if(Items is not null)
             {
                 ToPage(Paged?.CurrentPage ?? 1);
