@@ -1,8 +1,8 @@
 ﻿@if (IsShow)
 {
-    <div class="modal cp confirm @ActiveCss">
+    <div class="modal cp confirm presale-popup-terms @ActiveCss">
         <div class="modal-background" @onclick="Close"></div>
-        <div class="modal-content mw-3-5">
+        <div class="modal-content presales-modal">
             <div class="box radius-20">
                 @if (ChildContent is null)
                 {
@@ -13,21 +13,22 @@
                     @ChildContent
                 }
 
-            <div class="cta-wp mt-20 text-right">  
+            <div class="cta-wp mt-20 text-right terms-btn-wp">  
                 @if (Agreed.HasDelegate)
                 {
-                <button type="button" class="button fw-6 @IsLoadingBtn() @YesBtnClass" @onclick="Continue" disabled="@IsLoading">
+                <button type="button" class="button fw-6 mr-10 bg-green accept @IsLoadingBtn() @YesBtnClass" @onclick="Continue" disabled="@IsLoading">
                     @AgreedText
                 </button>
                 }
                 @if (NoOption.HasDelegate)
                 {
-                    <button type="button" class="button cst-text @NoBtnClass"  @onclick="No">@NotAgreedText</button>
+                    <button type="button" class="button cst-text mr-10 @NoBtnClass"  @onclick="No">@NotAgreedText</button>
                 }
                 @if (ClosePopup.HasDelegate)
                 {
-                    <button type="button" class="button cst-text @CancelBtnClass" @onclick="Close">@CancelText</button>
+                   <a href="/shop/checkout"> <button type="button" class="button cst-text mr-10 go-back @CancelBtnClass" @onclick="Close">@CancelText</button></a>
                 }
+                   <a href="/" class="button cst-text c-button bg-blue padding-btn">Continue Shopping</a>
             </div>
             </div>
         </div>
