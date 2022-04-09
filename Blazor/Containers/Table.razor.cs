@@ -52,13 +52,21 @@ namespace ClassLibrary.Containers
             set
             {
                 PageSizeBK = value;
-                if(Paged is not null) Paged = PagedList<T>.ToPagedList(Items, Paged.CurrentPage, PageSizeBK);
+                if(Paged is not null)
+                {
+                    Paged = PagedList<T>.ToPagedList(Items, Paged.CurrentPage, PageSizeBK);
+                    CreateBody();
+                }
             }
         }
 
         PagedList<T> Paged;
-        Task ToPage(int page) =>
-            Task.FromResult(Paged = PagedList<T>.ToPagedList(Items, page, PageSizeBK));
+        Task ToPage(int page)
+        {
+            Paged = PagedList<T>.ToPagedList(Items, page, PageSizeBK);
+            CreateBody();
+            return Task.CompletedTask;
+        }
         #endregion
 
         #region initializing
@@ -159,7 +167,7 @@ namespace ClassLibrary.Containers
 
         void DefaultView()
         {
-            if(Paged is not null)
+            if(Paged is not null && Head == null)
             {
                 if(AdditionalAttributes == null)
                 {
@@ -180,42 +188,49 @@ namespace ClassLibrary.Containers
                 //get all my attributes
                 DisplayTableAttribute[] attributes = new DisplayTableAttribute[properties.Length];
 
-                StringBuilder html;
-                if(Head == null)
+
+                StringBuilder html = new StringBuilder();
+                for(int i = 0; i < properties.Length; i++)
                 {
-                    html = new StringBuilder();
+                    attributes[i] = properties[i].GetCustomAttribute<DisplayTableAttribute>();                  //get if my custom attributes
+                                                                                                                //custom header class
+                    string OpenTHTag = attributes[i] != null && attributes[i].HeaderClass != null ? $"<th class=\"{attributes[i].HeaderClass}\">" : "<th>";
+                    //custom header name
+                    Attribute alias = Attribute.GetCustomAttribute(properties[i], typeof(DisplayAttribute));     //get if have attribute display to change the name of the property                    
+                    string header = attributes[i] != null && attributes[i].Header != null ? attributes[i].Header :      //custom header name
+                                    alias == null ? properties[i].Name : ((DisplayAttribute)alias).GetName();         //if not get the display attribute or name
+                    html.Append($"{OpenTHTag}{header}</th>");
+                }
+                DefaultHead = new MarkupString(html.ToString());
+            }
+            CreateBody();
+        }
+
+        private void CreateBody()
+        {
+            if(Paged is not null && Body == null)
+            {
+                StringBuilder html = new StringBuilder();
+                PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Public |           //get public names
+                                                                    BindingFlags.Instance);
+                //get all my attributes
+                DisplayTableAttribute[] attributes = new DisplayTableAttribute[properties.Length];
+
+                //get all the item to show the values
+                foreach(T item in Paged)
+                {
+                    html.Append("<tr>");
+                    //show the values
                     for(int i = 0; i < properties.Length; i++)
                     {
                         attributes[i] = properties[i].GetCustomAttribute<DisplayTableAttribute>();                  //get if my custom attributes
-                                                                                                                    //custom header class
-                        string OpenTHTag = attributes[i] != null && attributes[i].HeaderClass != null ? $"<th class=\"{attributes[i].HeaderClass}\">" : "<th>";
-                        //custom header name
-                        Attribute alias = Attribute.GetCustomAttribute(properties[i], typeof(DisplayAttribute));     //get if have attribute display to change the name of the property                    
-                        string header = attributes[i] != null && attributes[i].Header != null ? attributes[i].Header :      //custom header name
-                                        alias == null ? properties[i].Name : ((DisplayAttribute)alias).GetName();         //if not get the display attribute or name
-                        html.Append($"{OpenTHTag}{header}</th>");
+                        string OpenTDTag = attributes[i] != null && attributes[i].ColClass != null ? $"<td class=\"{attributes[i].ColClass}\">" : "<td>";
+                        var value = attributes[i] != null && attributes[i].ValueFormat != null ? string.Format(attributes[i].ValueFormat, properties[i].GetValue(item)) : properties[i].GetValue(item);
+                        html.Append($"{OpenTDTag}{value}</td>");
                     }
-                    DefaultHead = new MarkupString(html.ToString());
+                    html.Append("</tr>");
                 }
-                if(Body == null)
-                {
-                    html = new StringBuilder();
-                    //get all the item to show the values
-                    foreach(T item in Paged)
-                    {
-                        html.Append("<tr>");
-                        //show the values
-                        for(int i = 0; i < properties.Length; i++)
-                        {
-                            attributes[i] = properties[i].GetCustomAttribute<DisplayTableAttribute>();                  //get if my custom attributes
-                            string OpenTDTag = attributes[i] != null && attributes[i].ColClass != null ? $"<td class=\"{attributes[i].ColClass}\">" : "<td>";
-                            var value = attributes[i] != null && attributes[i].ValueFormat != null ? string.Format(attributes[i].ValueFormat, properties[i].GetValue(item)) : properties[i].GetValue(item);
-                            html.Append($"{OpenTDTag}{value}</td>");
-                        }
-                        html.Append("</tr>");
-                    }
-                    DefaultBody = new MarkupString(html.ToString());
-                }
+                DefaultBody = new MarkupString(html.ToString());
             }
         }
         #endregion
