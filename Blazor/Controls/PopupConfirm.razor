@@ -1,8 +1,8 @@
 ﻿@if (IsShow)
 {
-    <div class="modal cp confirm @ActiveCss">
+    <div class="modal cp confirm @PopupConent @ActiveCss">
         <div class="modal-background" @onclick="Close"></div>
-        <div class="modal-content mw-3-5">
+        <div class="modal-content  @ModalConent">
             <div class="box radius-20">
                 @if (ChildContent is null)
                 {
@@ -13,16 +13,16 @@
                     @ChildContent
                 }
 
-            <div class="cta-wp mt-20 text-right">  
+            <div class="cta-wp mt-20 text-right @ButtonsContainer">
                 @if (Agreed.HasDelegate)
                 {
-                <button type="button" class="button fw-6 @IsLoadingBtn() @YesBtnClass" @onclick="Continue" disabled="@IsLoading">
-                    @AgreedText
-                </button>
+                    <button type="button" class="button fw-6 @YesBtnClass @IsLoadingBtn() " @onclick="Continue" disabled="@IsLoading">
+                        @AgreedText
+                    </button>
                 }
                 @if (NoOption.HasDelegate)
                 {
-                    <button type="button" class="button cst-text @NoBtnClass"  @onclick="No">@NotAgreedText</button>
+                    <button type="button" class="button cst-text @NoBtnClass" @onclick="No">@NotAgreedText</button>
                 }
                 @if (ClosePopup.HasDelegate)
                 {
