@@ -5,10 +5,12 @@
         <table @attributes="AdditionalAttributes" id="@TableId">
             @if (Items is not null && Items.Any())
             {
-                <caption>
-                    <div class="columns">
+                if(Items.Count() > PageSize)
+                {
+                    <caption>
+                        <div class="columns">
                         <div class="column right-yt-warehouse">
-                            <select @bind="PageSize" class="@SelectCss">
+                            <select @bind="PageSize" class="@SelectCss" title="Paging">
                                 <option disabled>Select List Count</option>
                                 <option selected="@(PageSize == 5)" value="5">5</option>
                                 <option selected="@(PageSize == 10)" value="10">10</option>
@@ -20,6 +22,7 @@
                         </div>
                     </div>
                 </caption>
+                }
                 <thead>
                     <tr>
                         @if (Head is not null)
