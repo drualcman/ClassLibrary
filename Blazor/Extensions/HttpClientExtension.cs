@@ -1,7 +1,9 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Policy;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace ClassLibrary.Extensions
 {
@@ -19,17 +21,19 @@ namespace ClassLibrary.Extensions
         }
 
         #region GET
-        public static async Task<HttpResponseMessage> GetAuthAsync(this HttpClient httpClient, string token, string requestUri)
+        public static async Task<HttpResponseMessage> GetAuthAsync(this HttpClient httpClient, string token, string url)
         {
+            string requestUri = HttpUtility.UrlEncode(url);
             //set the token for the authentication            
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             HttpResponseMessage response = await httpClient.GetAsync(requestUri);
             return response;
         }
 
-        public static async Task<TValue> GetAuthAsync<TValue>(this HttpClient httpClient, string token, string requestUri)
+        public static async Task<TValue> GetAuthAsync<TValue>(this HttpClient httpClient, string token, string url)
         {
-            //set the token for the authentication            
+            //set the token for the authentication  
+            string requestUri = HttpUtility.UrlEncode(url);          
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             TValue response = await httpClient.GetFromJsonAsync<TValue>(requestUri);
             return response;
@@ -80,7 +84,7 @@ namespace ClassLibrary.Extensions
         {
             //set the token for the authentication            
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            return await httpClient.PutAsJsonAsync(requestUri, value); ;
+            return await httpClient.PutAsJsonAsync(requestUri, value);
         }
         #endregion
 
