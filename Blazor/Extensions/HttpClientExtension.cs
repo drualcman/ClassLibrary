@@ -12,7 +12,7 @@ namespace ClassLibrary.Extensions
         public static async Task<HttpResponseMessage> SendAuthAsync(this HttpClient httpClient, string token, HttpMethod method, string requestUri, HttpContent value = null)
         {
             //check is the user are authenticated
-            HttpRequestMessage requestMessage = new HttpRequestMessage(method, requestUri);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(method, UrlHashCheck(requestUri));
             //set the token for the authentication
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             requestMessage.Content = value;
@@ -21,21 +21,19 @@ namespace ClassLibrary.Extensions
         }
 
         #region GET
-        public static async Task<HttpResponseMessage> GetAuthAsync(this HttpClient httpClient, string token, string url)
+        public static async Task<HttpResponseMessage> GetAuthAsync(this HttpClient httpClient, string token, string requestUri)
         {
-            string requestUri = HttpUtility.UrlEncode(url);
             //set the token for the authentication            
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            HttpResponseMessage response = await httpClient.GetAsync(requestUri);
+            HttpResponseMessage response = await httpClient.GetAsync(UrlHashCheck(requestUri));
             return response;
         }
 
-        public static async Task<TValue> GetAuthAsync<TValue>(this HttpClient httpClient, string token, string url)
+        public static async Task<TValue> GetAuthAsync<TValue>(this HttpClient httpClient, string token, string requestUri)
         {
             //set the token for the authentication  
-            string requestUri = HttpUtility.UrlEncode(url);          
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            TValue response = await httpClient.GetFromJsonAsync<TValue>(requestUri);
+            TValue response = await httpClient.GetFromJsonAsync<TValue>(UrlHashCheck(requestUri));
             return response;
         }
         #endregion
@@ -101,6 +99,14 @@ namespace ClassLibrary.Extensions
             //set the token for the authentication            
             HttpResponseMessage response = await DeleteAuthAsync(httpClient, token, requestUri);
             TValue result = await response.Content.ReadFromJsonAsync<TValue>();
+            return result;
+        }
+        #endregion
+
+        #region helpers
+        private static string UrlHashCheck(string url)
+        {
+            string result = url.Replace("#", "%23");
             return result;
         }
         #endregion
