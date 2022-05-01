@@ -44,17 +44,16 @@ namespace ClassLibrary.Containers
         #region pagging
         [Parameter] public string SelectCss { get; set; } = "select";
 
-        private int PageSizeBK = 10;
 
         public int PageSize
         {
-            get { return PageSizeBK; }
+            get { return PageRowSize; }
             set
             {
-                PageSizeBK = value;
+                PageRowSize = value;
                 if(Paged is not null)
                 {
-                    Paged = PagedList<T>.ToPagedList(Items, Paged.CurrentPage, PageSizeBK);
+                    Paged = PagedList<T>.ToPagedList(Items, Paged.CurrentPage, PageRowSize);
                     CreateBody();
                 }
             }
@@ -63,7 +62,7 @@ namespace ClassLibrary.Containers
         PagedList<T> Paged;
         Task ToPage(int page)
         {
-            Paged = PagedList<T>.ToPagedList(Items, page, PageSizeBK);
+            Paged = PagedList<T>.ToPagedList(Items, page, PageRowSize);
             CreateBody();
             return Task.CompletedTask;
         }
@@ -77,7 +76,7 @@ namespace ClassLibrary.Containers
 
         protected override void OnParametersSet()
         {
-            PageSizeBK = PageRowSize > 0 ? PageRowSize : 10;
+            PageRowSize = PageRowSize < 5 ? 10 : PageRowSize;
             if(Items is not null)
             {
                 ToPage(Paged?.CurrentPage ?? 1);
