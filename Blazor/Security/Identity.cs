@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ClassLibrary.Security
@@ -194,6 +195,41 @@ namespace ClassLibrary.Security
 
         #region user calls
         /// <summary>
+        /// Get the claims about the token and return the user model
+        /// Authentication used jwt authentication
+        /// </summary>
+        /// <typeparam name="TUser"></typeparam>
+        /// <returns></returns>
+        public static TUser GetUserAsync<TUser>(string token) where TUser : new()
+        {
+            if(string.IsNullOrEmpty(token)) return new TUser();
+            else
+            {
+                try
+                {
+                    string[] data = token.Split('.');
+                    string jsonString = Cipher.Hash.Base64.Base64UrlDecode(data[1]);
+                    JsonSerializerOptions options = new JsonSerializerOptions { 
+                        WriteIndented = true, 
+                        NumberHandling = JsonNumberHandling.AllowReadingFromString,
+                        AllowTrailingCommas = true,                         
+                        Converters = { 
+                            new CustomJsonStringEnumConverter(),        //deserialize enumerals from description
+                            new CustomStringBooleanConverter()          //deserialize boolean from string
+                        }, 
+                    };
+                    TUser user = JsonSerializer.Deserialize<TUser>(jsonString, options);
+                    return user;
+                }
+                catch  (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return new TUser();
+                }
+            }
+        }
+
+        /// <summary>
         /// Get the claims about the active user and return the user model
         /// Authentication used jwt authentication
         /// </summary>
@@ -347,7 +383,10 @@ namespace ClassLibrary.Security
                 //get property name
                 string myType = properties[i].Name;
                 //get value of the property
-                string myValue = properties[i].GetValue(user).ToString();
+                string myValue;
+                var myGetValue = properties[i].GetValue(user);
+                if(myGetValue != null) myValue = myGetValue.ToString();
+                else myValue = string.Empty;
 
                 //if it's Authentication Ignore don't insert in the claims
                 Attributes.Identity identityAttributes = properties[i].GetCustomAttribute<Attributes.Identity>();
