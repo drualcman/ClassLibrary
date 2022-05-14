@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ClassLibrary.Security
@@ -56,7 +55,7 @@ namespace ClassLibrary.Security
                 await jsRuntime.SetAllDataAsync(jsonData, token);
                 result = true;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 string err = ex.Message;
                 result = false;
@@ -81,7 +80,7 @@ namespace ClassLibrary.Security
                 DateTimeOffset expired = DateTimeOffset.FromUnixTimeSeconds(json.GetProperty("exp").GetInt64());
                 result = expired <= DateTime.Now;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 string err = ex.Message;
                 result = true;
@@ -193,42 +192,28 @@ namespace ClassLibrary.Security
         }
         #endregion
 
-        #region user calls
+        #region user calls   
         /// <summary>
-        /// Get the claims about the token and return the user model
+        /// Get the claims about the active user and return the user model
         /// Authentication used jwt authentication
         /// </summary>
         /// <typeparam name="TUser"></typeparam>
+        /// <param name="jsRuntime"></param>
         /// <returns></returns>
         public static TUser GetUserAsync<TUser>(string token) where TUser : new()
         {
-            if(string.IsNullOrEmpty(token)) return new TUser();
-            else
+            try
             {
-                try
-                {
-                    string[] data = token.Split('.');
-                    string jsonString = Cipher.Hash.Base64.Base64UrlDecode(data[1]);
-                    JsonSerializerOptions options = new JsonSerializerOptions { 
-                        WriteIndented = true, 
-                        NumberHandling = JsonNumberHandling.AllowReadingFromString,
-                        AllowTrailingCommas = true,                         
-                        Converters = { 
-                            new CustomJsonStringEnumConverter(),        //deserialize enumerals from description
-                            new CustomStringBooleanConverter()          //deserialize boolean from string
-                        }, 
-                    };
-                    TUser user = JsonSerializer.Deserialize<TUser>(jsonString, options);
-                    return user;
-                }
-                catch  (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    return new TUser();
-                }
+                string[] data = token.Split('.');
+                string jsonString = Cipher.Hash.Base64.Base64UrlDecode(data[1]);
+                JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true, Converters = { new CustomJsonStringEnumConverter() } };
+                return JsonSerializer.Deserialize<TUser>(jsonString, options);
+            }
+            catch
+            {
+                return new TUser();
             }
         }
-
         /// <summary>
         /// Get the claims about the active user and return the user model
         /// Authentication used jwt authentication
@@ -283,7 +268,7 @@ namespace ClassLibrary.Security
             {
                 TUser User = new TUser();
                 AuthenticateResult x = await context.AuthenticateAsync(authenticationType);
-                if (x.Succeeded)
+                if(x.Succeeded)
                 {
                     //use reflexion to fill the object
                     Type myType = typeof(TUser);
@@ -296,30 +281,39 @@ namespace ClassLibrary.Security
                     int c = 0;
                     do
                     {
-                        if (assemblies[c].GetName().Name == myType.Namespace)
+                        if(assemblies[c].GetName().Name == myType.Namespace)
                         {
                             Type t = assemblies[c].GetType(model, true, true);
-                            foreach (Claim item in x.Principal.Claims)
+                            foreach(Claim item in x.Principal.Claims)
                             {
-                                if (item.Type != ClaimTypes.Name)
+                                if(item.Type != ClaimTypes.Name)
                                 {
                                     PropertyInfo property = t.GetProperty(item.Type);
                                     //convert to the correct property type
                                     Type tipo = property.PropertyType;
-                                    if (!tipo.IsEnum) property.SetValue(User, Convert.ChangeType(item.Value, tipo));
-                                    else property.SetValue(User, item.Value);
+                                    if(!tipo.IsEnum) property.SetValue(User, Convert.ChangeType(item.Value, tipo));
+                                    else                                    
+                                    {
+                                        if(item.Value.GetType() == typeof(string))
+                                        {
+                                            var enumeral = Activator.CreateInstance(tipo);
+                                            Enum.TryParse(tipo, item.Value, out enumeral);
+                                            property.SetValue(User, enumeral);
+                                        }
+                                        else property.SetValue(User, item.Value);
+                                    }
                                 }
                             }
                             c = assemblies.Length;
                         }
                         c++;
-                    } while (c < assemblies.Length);
+                    } while(c < assemblies.Length);
 
 
                 }
                 return User;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 throw new Exception("Get user claims exception", ex);
             }
@@ -378,28 +372,25 @@ namespace ClassLibrary.Security
 
             int c = properties.Length;
             int i = 0;
-            for (i = 0; i < c; i++)
+            for(i = 0; i < c; i++)
             {
                 //get property name
                 string myType = properties[i].Name;
                 //get value of the property
-                string myValue;
-                var myGetValue = properties[i].GetValue(user);
-                if(myGetValue != null) myValue = myGetValue.ToString();
-                else myValue = string.Empty;
+                string myValue = properties[i].GetValue(user).ToString();
 
                 //if it's Authentication Ignore don't insert in the claims
                 Attributes.Identity identityAttributes = properties[i].GetCustomAttribute<Attributes.Identity>();
-                if (identityAttributes is null)
+                if(identityAttributes is null)
                 {
                     claims.Add(new Claim(myType, myValue));
                 }
                 else
                 {
-                    if (!identityAttributes.ClaimIgnore)
+                    if(!identityAttributes.ClaimIgnore)
                     {
                         foundName = identityAttributes.DisplayName;
-                        if (foundName)
+                        if(foundName)
                         {
                             claims.Add(new Claim(myType, myValue));
                             claims.Add(new Claim(ClaimTypes.Name, myValue));
@@ -408,7 +399,7 @@ namespace ClassLibrary.Security
                     }
                 }
             }
-            if (!foundName)
+            if(!foundName)
             {
                 i = 0;
                 do
@@ -418,19 +409,19 @@ namespace ClassLibrary.Security
                     //get value of the property
                     string myValue = properties[i].GetValue(user).ToString();
 
-                    if (myType.ToLower() == displayName.ToLower())
+                    if(myType.ToLower() == displayName.ToLower())
                     {
                         claims.Add(new Claim(ClaimTypes.Name, myValue));
                         foundName = true;
                     }
                     i++;
-                } while (!foundName && i < c);
+                } while(!foundName && i < c);
 
-                if (!foundName)
+                if(!foundName)
                 {
                     //not found DisplayName property, search a email
                     Claim n = claims.Find(n => n.Value.Contains("@"));
-                    if (n != null) claims.Add(new Claim(ClaimTypes.Name, n.Value));
+                    if(n != null) claims.Add(new Claim(ClaimTypes.Name, n.Value));
                     else        //if nothing found set the first property like display name
                         claims.Add(new Claim(ClaimTypes.Name, claims[0].Value));
                 }
@@ -458,7 +449,7 @@ namespace ClassLibrary.Security
         private static string Token()
         {
             long i = 1;
-            foreach (byte b in Guid.NewGuid().ToByteArray()) i *= ((int)b + 1);
+            foreach(byte b in Guid.NewGuid().ToByteArray()) i *= ((int)b + 1);
             Cipher.Hash.MD5 md5 = new Cipher.Hash.MD5();
             return md5.ComputeHash(string.Format("{0:x}", i - DateTime.Now.Ticks));
         }
