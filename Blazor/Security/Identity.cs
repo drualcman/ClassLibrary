@@ -292,7 +292,7 @@ namespace ClassLibrary.Security
                                     //convert to the correct property type
                                     Type tipo = property.PropertyType;
                                     if(!tipo.IsEnum) property.SetValue(User, Convert.ChangeType(item.Value, tipo));
-                                    else                                    
+                                    else
                                     {
                                         if(item.Value.GetType() == typeof(string))
                                         {
@@ -366,64 +366,76 @@ namespace ClassLibrary.Security
         public static List<Claim> SetClaims<TUser>(string displayName, TUser user)
         {
             List<Claim> claims = new List<Claim>();
-            //use reflexion to get dynamic the properties about the user object
-            PropertyInfo[] properties = typeof(TUser).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            bool foundName = false;
-
-            int c = properties.Length;
-            int i = 0;
-            for(i = 0; i < c; i++)
+            if(user != null)
             {
-                //get property name
-                string myType = properties[i].Name;
-                //get value of the property
-                string myValue = properties[i].GetValue(user).ToString();
-
-                //if it's Authentication Ignore don't insert in the claims
-                Attributes.Identity identityAttributes = properties[i].GetCustomAttribute<Attributes.Identity>();
-                if(identityAttributes is null)
+                //use reflexion to get dynamic the properties about the user object
+                PropertyInfo[] properties = typeof(TUser).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                bool foundName = false;
+                int c = properties.Length;
+                int i = 0;
+                for(i = 0; i < c; i++)
                 {
-                    claims.Add(new Claim(myType, myValue));
-                }
-                else
-                {
-                    if(!identityAttributes.ClaimIgnore)
+                    if(properties[i] != null)
                     {
-                        foundName = identityAttributes.DisplayName;
-                        if(foundName)
+                        //get property name
+                        string myType = properties[i].Name;
+                        //get value of the property
+                        string myValue;
+                        try
                         {
-                            claims.Add(new Claim(myType, myValue));
-                            claims.Add(new Claim(ClaimTypes.Name, myValue));
+                            myValue = properties[i].GetValue(user).ToString();
+                            //if it's Authentication Ignore don't insert in the claims
+                            Attributes.Identity identityAttributes = properties[i].GetCustomAttribute<Attributes.Identity>();
+                            if(identityAttributes is null)
+                            {
+                                claims.Add(new Claim(myType, myValue));
+                            }
+                            else
+                            {
+                                if(!identityAttributes.ClaimIgnore)
+                                {
+                                    foundName = identityAttributes.DisplayName;
+                                    if(foundName)
+                                    {
+                                        claims.Add(new Claim(myType, myValue));
+                                        claims.Add(new Claim(ClaimTypes.Name, myValue));
+                                    }
+                                    else claims.Add(new Claim(myType, myValue));
+                                }
+                            }
                         }
-                        else claims.Add(new Claim(myType, myValue));
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
                     }
                 }
-            }
-            if(!foundName)
-            {
-                i = 0;
-                do
-                {
-                    //get property name
-                    string myType = properties[i].Name;
-                    //get value of the property
-                    string myValue = properties[i].GetValue(user).ToString();
-
-                    if(myType.ToLower() == displayName.ToLower())
-                    {
-                        claims.Add(new Claim(ClaimTypes.Name, myValue));
-                        foundName = true;
-                    }
-                    i++;
-                } while(!foundName && i < c);
-
                 if(!foundName)
                 {
-                    //not found DisplayName property, search a email
-                    Claim n = claims.Find(n => n.Value.Contains("@"));
-                    if(n != null) claims.Add(new Claim(ClaimTypes.Name, n.Value));
-                    else        //if nothing found set the first property like display name
-                        claims.Add(new Claim(ClaimTypes.Name, claims[0].Value));
+                    i = 0;
+                    do
+                    {
+                        //get property name
+                        string myType = properties[i].Name;
+                        //get value of the property
+                        string myValue = properties[i].GetValue(user).ToString();
+
+                        if(myType.ToLower() == displayName.ToLower())
+                        {
+                            claims.Add(new Claim(ClaimTypes.Name, myValue));
+                            foundName = true;
+                        }
+                        i++;
+                    } while(!foundName && i < c);
+
+                    if(!foundName)
+                    {
+                        //not found DisplayName property, search a email
+                        Claim n = claims.Find(n => n.Value.Contains("@"));
+                        if(n != null) claims.Add(new Claim(ClaimTypes.Name, n.Value));
+                        else        //if nothing found set the first property like display name
+                            claims.Add(new Claim(ClaimTypes.Name, claims[0].Value));
+                    }
                 }
             }
             return claims;
