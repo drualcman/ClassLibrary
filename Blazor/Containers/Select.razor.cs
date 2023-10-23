@@ -30,24 +30,24 @@ namespace ClassLibrary.Containers
 
         protected override void OnParametersSet()
         {
-            if (AdditionalAttributes == null)
+            if(AdditionalAttributes == null)
             {
                 AdditionalAttributes = new Dictionary<string, object>();
             }
-            if (!AdditionalAttributes.ContainsKey("class"))
+            if(!AdditionalAttributes.ContainsKey("class"))
             {
                 //check if have a table css class on the model send
                 DisplayTableAttribute cssClass = typeof(T).GetCustomAttribute<DisplayTableAttribute>();
-                if (cssClass != null && cssClass.TableClass != null) AdditionalAttributes.Add("class", cssClass.TableClass);
+                if(cssClass != null && cssClass.TableClass != null) AdditionalAttributes.Add("class", cssClass.TableClass);
                 else AdditionalAttributes.Add("class", DefaultCSSClass);
             }
-            if (Items != null)
+            if(Items != null)
             {
                 StringBuilder html = new StringBuilder();
                 PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-                if (properties.Length > 2)
+                if(properties.Length > 2)
                 {
-                    foreach (T item in Items)
+                    foreach(T item in Items)
                     {
 
                     }

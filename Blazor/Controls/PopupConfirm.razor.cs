@@ -49,7 +49,7 @@ namespace ClassLibrary.Controls
         [Parameter]
         public bool IsLoading { get; set; }
 
-        [Parameter]  public string ActiveCss { get; set; }
+        [Parameter] public string ActiveCss { get; set; }
         [Parameter] public string PopupConent { get; set; }
         [Parameter] public string ModalConent { get; set; } = "mw-3-5";
         [Parameter] public string ButtonsContainer { get; set; }

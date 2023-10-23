@@ -79,14 +79,14 @@ namespace ClassLibrary.Containers
         async Task OpenModal()
         {
             IsShowingModal = true;
-            if (!string.IsNullOrEmpty(SearchInputUniqueClass))
+            if(!string.IsNullOrEmpty(SearchInputUniqueClass))
             {
                 try
                 {
                     await Task.Yield();
                     await JSRuntime.InvokeVoidAsync("$p.Focus", $".{SearchInputUniqueClass}");
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Console.WriteLine(ex);
                 }

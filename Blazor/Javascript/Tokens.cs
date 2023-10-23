@@ -81,7 +81,7 @@ namespace ClassLibrary.Javascript
         {
             string token = await jsRuntime.LocalStorageGetAsync("token");
             bool result;
-            if (string.IsNullOrEmpty(token)) result = true;
+            if(string.IsNullOrEmpty(token)) result = true;
             else
             {
                 string payload = Cipher.Hash.Base64.Base64UrlDecode(token.Split('.')[1]);

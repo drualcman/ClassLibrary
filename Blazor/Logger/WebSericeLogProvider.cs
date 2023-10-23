@@ -21,9 +21,9 @@ namespace ClassLibrary.Logger
         private bool disposedValue;
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if(!disposedValue)
             {
-                if (disposing)
+                if(disposing)
                 {
                     // TODO: dispose managed state (managed objects)
                 }

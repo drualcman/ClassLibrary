@@ -35,10 +35,10 @@ namespace ClassLibrary.Helpers
         /// <returns></returns>
         public static MarkupString ToHtml(this string content, string[] code, string[] replace)
         {
-            if (code.Length == replace.Length)
+            if(code.Length == replace.Length)
             {
                 int c = code.Length;
-                for (int i = 0; i < c; i++)
+                for(int i = 0; i < c; i++)
                 {
                     content = content.Replace(code[i], replace[i]);
                 }

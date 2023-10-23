@@ -10,7 +10,7 @@ namespace ClassLibrary.Helpers
     public class CustomJsonStringEnumConverter : JsonConverterFactory
     {
         private readonly JsonStringEnumConverter baseConverter;
-              
+
         public CustomJsonStringEnumConverter(JsonNamingPolicy namingPolicy = null, bool allowIntegerValues = true)
         {
             baseConverter = new JsonStringEnumConverter(namingPolicy, allowIntegerValues);

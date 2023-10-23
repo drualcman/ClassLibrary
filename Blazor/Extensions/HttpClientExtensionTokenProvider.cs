@@ -10,7 +10,7 @@ namespace ClassLibrary.Extensions
         {
             AccessTokenResult accessTokenResult = await accessTokenProvider.RequestAccessToken();
             string tokenResult;
-            if (accessTokenResult.TryGetToken(out AccessToken token))
+            if(accessTokenResult.TryGetToken(out AccessToken token))
             {
                 tokenResult = token.Value;
             }

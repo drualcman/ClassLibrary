@@ -53,7 +53,7 @@ namespace ClassLibrary.Javascript
         public static async void BulmaMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string title, string message, int timeout)
         {
-            switch (type)
+            switch(type)
             {
                 case BoxType.Success:
                     await jsRuntume.InvokeVoidAsync("$p.MsgSuccess", target, title, message, timeout, true);
@@ -150,7 +150,7 @@ namespace ClassLibrary.Javascript
         public static async void BootstrapMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string title, string message, int timeout)
         {
-            switch (type)
+            switch(type)
             {
                 case BoxType.Success:
                     await jsRuntume.InvokeVoidAsync("$p.MsgSuccess", target, title, message, timeout, false);
@@ -228,7 +228,7 @@ namespace ClassLibrary.Javascript
         public static async void CustomMessageAsync(this IJSRuntime jsRuntume, BoxType type,
             string target, string title, string message, int timeout, string classes = "")
         {
-            switch (type)
+            switch(type)
             {
                 case BoxType.Success:
                     await jsRuntume.InvokeVoidAsync("CustomMessage", target, title, message, "is-success", timeout, classes);

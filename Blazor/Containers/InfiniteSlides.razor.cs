@@ -52,7 +52,7 @@ namespace ClassLibrary.Containers
         {
             ItemsList = new List<Item>();
             int order = 0;
-            foreach (TItem item in Items)
+            foreach(TItem item in Items)
             {
                 ItemsList.Add(new Item
                 {
@@ -68,10 +68,10 @@ namespace ClassLibrary.Containers
         void MoveRight()
         {
             int c = ItemsList.Count();
-            for (int i = 0; i < c; i++)
+            for(int i = 0; i < c; i++)
             {
                 ItemsList[i].Order = ItemsList[i].Order + 1;
-                if (ItemsList[i].Order >= c) ItemsList[i].Order = 0;
+                if(ItemsList[i].Order >= c) ItemsList[i].Order = 0;
             }
             ItemsList.Sort((a, b) => a.Order.CompareTo(b.Order));
         }
@@ -80,10 +80,10 @@ namespace ClassLibrary.Containers
         {
             SortedList<int, Item> valuePairs = new SortedList<int, Item>();
             int c = ItemsList.Count() - 1;
-            for (int i = c; i >= 0; i--)
+            for(int i = c; i >= 0; i--)
             {
                 ItemsList[i].Order = ItemsList[i].Order - 1;
-                if (ItemsList[i].Order < 0) ItemsList[i].Order = c;
+                if(ItemsList[i].Order < 0) ItemsList[i].Order = c;
             }
             ItemsList.Sort((a, b) => a.Order.CompareTo(b.Order));
         }

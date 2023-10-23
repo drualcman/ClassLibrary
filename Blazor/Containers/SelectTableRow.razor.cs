@@ -48,7 +48,7 @@ namespace ClassLibrary.Containers
         /// <returns></returns>
         string SetSelected(T item)
         {
-            if (SelectedItem is not null)
+            if(SelectedItem is not null)
             {
                 return SelectedItem.Equals(item) ? string.IsNullOrEmpty(RowClassSelected) ? "is-selected" : RowClassSelected : "";
             }

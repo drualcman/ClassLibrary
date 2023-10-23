@@ -29,12 +29,12 @@ namespace ClassLibrary.Handlers
         public UploadFilesHandler(IDefaultServices services = null, HttpClient httpClient = null, IJSRuntime jSRuntime = null, int maxFiles = 5, long maxSize = 512000) :
             base(httpClient, maxFiles, maxSize)
         {
-            if (services is not null)
+            if(services is not null)
             {
                 HttpClient = services.Client ?? httpClient;
                 JSRuntime = services.JsRuntime ?? jSRuntime;
             }
-            if (jSRuntime is not null) JSRuntime = jSRuntime;
+            if(jSRuntime is not null) JSRuntime = jSRuntime;
 
         }
         #endregion
@@ -101,9 +101,9 @@ namespace ClassLibrary.Handlers
         /// <returns></returns>
         public async Task<HttpResponseMessage> UploadAuthAsync(string urlEndPoint, MultipartFormDataContent content, bool ignoreFiles, string field = "files")
         {
-            if (ignoreFiles)
+            if(ignoreFiles)
             {
-                if (UploadedImage is not null)
+                if(UploadedImage is not null)
                 {
                     content.Add(
                         content: UploadedImage,
@@ -140,7 +140,7 @@ namespace ClassLibrary.Handlers
         /// <returns></returns>
         public async Task<HttpResponseMessage> UploadAuthAsync(string urlEndPoint, MultipartFormDataContent content, StreamContent file, string fileName = "", string field = "files", bool ignoreFiles = true)
         {
-            if (file is not null)
+            if(file is not null)
             {
                 content.Add(
                     content: file,
@@ -165,13 +165,13 @@ namespace ClassLibrary.Handlers
         private async Task<HttpResponseMessage> UploadFilesAuthAsync(string urlEndPoint, MultipartFormDataContent content,
             bool ignoreFiles, string field = "files")
         {
-            if (this.HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
-            if (JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
-            if (!ignoreFiles)
+            if(this.HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
+            if(JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
+            if(!ignoreFiles)
             {
                 int c = UploadedFiles.Count;
                 long size = 0;
-                for (int i = 0; i < c; i++)
+                for(int i = 0; i < c; i++)
                 {
                     content.Add(
                         content: UploadedFiles[i].FileStreamContent,
@@ -186,13 +186,13 @@ namespace ClassLibrary.Handlers
             HttpResponseMessage response;
             try
             {
-                if (this.Count < 1)
+                if(this.Count < 1)
                 {
                     OnUploadErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"No files to upload", "UploadFilesAsync"));
                 }
                 response = await HttpClient.PostAuthAsync(JSRuntime, urlEndPoint, content);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 OnAPIErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"{urlEndPoint}: Exception: {ex.Message}", "UploadFilesAsync", ex));
                 response = null;
@@ -257,9 +257,9 @@ namespace ClassLibrary.Handlers
         /// <returns></returns>
         public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, bool ignoreFiles, string field = "files")
         {
-            if (ignoreFiles)
+            if(ignoreFiles)
             {
-                if (UploadedImage is not null)
+                if(UploadedImage is not null)
                 {
                     content.Add(
                         content: UploadedImage,
@@ -298,7 +298,7 @@ namespace ClassLibrary.Handlers
         /// <returns></returns>
         public async Task<TModel> UploadAuthAsync<TModel>(string urlEndPoint, MultipartFormDataContent content, StreamContent file, string fileName = "", string field = "files", bool ignoreFiles = true)
         {
-            if (file is not null)
+            if(file is not null)
             {
                 content.Add(
                     content: file,
@@ -327,12 +327,12 @@ namespace ClassLibrary.Handlers
             TModel response;
             try
             {
-                if (this.Count < 1)
+                if(this.Count < 1)
                 {
                     OnUploadErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"No files to upload", "UploadFilesAsync"));
                 }
                 using HttpResponseMessage result = await UploadFilesAuthAsync(urlEndPoint, content, ignoreFiles);
-                if (result.IsSuccessStatusCode) response = await result.Content.ReadFromJsonAsync<TModel>();
+                if(result.IsSuccessStatusCode) response = await result.Content.ReadFromJsonAsync<TModel>();
                 else
                 {
                     //decode the error from the call of the end point                        
@@ -341,7 +341,7 @@ namespace ClassLibrary.Handlers
                     response = default(TModel);
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 OnAPIErrorEvent(this, new BlazorInputFileExtended.Exceptions.InputFileException($"{urlEndPoint}: Exception: {ex.Message}", "UploadFilesAsync", ex));
                 response = default(TModel);
@@ -368,9 +368,9 @@ namespace ClassLibrary.Handlers
         /// <returns></returns>
         public async Task<bool> DeleteAuthAsync(string endPoint, string filename, string field)
         {
-            if (HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
-            if (JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
-            if (string.IsNullOrEmpty(filename)) return false;
+            if(HttpClient is null) throw new ArgumentException("At least HttpClient Must be provided. Use HttpClient or IDefaultServices.");
+            if(JSRuntime is null) throw new ArgumentException("At least IJSRuntime Must be provided. Use IJSRuntime or IDefaultServices.");
+            if(string.IsNullOrEmpty(filename)) return false;
 
             MultipartFormDataContent content = new MultipartFormDataContent();
             content.Add(new StringContent(filename), field);
@@ -385,13 +385,13 @@ namespace ClassLibrary.Handlers
 
         protected override void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if(!disposedValue)
             {
-                if (disposing)
+                if(disposing)
                 {
                     UploadedImage?.Dispose();
                     int c = UploadedFiles.Count;
-                    for (int i = 0; i < c; i++)
+                    for(int i = 0; i < c; i++)
                     {
                         UploadedFiles[i]?.FileStreamContent?.Dispose();
                     }
